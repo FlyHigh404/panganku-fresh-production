@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "next": "^15.5.2",
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^6.19.0",
     "@scalar/nextjs-api-reference": "^0.9.7",
