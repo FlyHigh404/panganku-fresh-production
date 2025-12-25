@@ -40,6 +40,52 @@ io.on("connection", (socket) => {
   });
 });
 
+// Endpoint route
+// Signup
+app.post("/app/api/auth/signup", async (req: Request, res: Response) => {
+  try {
+    const { email, password, name } = req.body;
+    // Logika pendaftaran user ke Prisma di sini
+    res.json({ success: true, message: "User created" });
+  } catch (err) {
+    res.status(500).json({ error: "Signup failed" });
+  }
+});
+
+// Route Products
+app.get("/app/api/products", async (req: Request, res: Response) => {
+  try {
+    const products = await prisma.product.findMany();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
+
+// Route Search Products
+app.get("/app/api/products/search", async (req: Request, res: Response) => {
+  const { q } = req.query;
+  try {
+    const products = await prisma.product.findMany({
+      where: { name: { contains: String(q), mode: 'insensitive' } }
+    });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Search failed" });
+  }
+});
+
+// Route Categories
+app.get("/app/api/products/categories", async (req: Request, res: Response) => {
+  try {
+    const categories = await prisma.category.findMany();
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+});
+
+
 // Endpoint untuk update status order (Midtrans/Admin)
 app.post("/notify", async (req: Request, res: Response) => {
   try {
