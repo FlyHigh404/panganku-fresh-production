@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../../../../../lib/prisma";
 import { AuthRequest } from "../../../../api/middleware/auth.middleware";
 import { Response } from "express";
 
