@@ -51,15 +51,20 @@ import uploadRoutes from "@/app/api/upload/route"
 const app = express();
 app.use(express.json);
 
-// Pastikan CORS mengizinkan domain frontend Hostinger Anda nantinya
-app.use(cors());
+const corsOptions = {
+  origin: 'https://pangankufresh.com', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
 const httpServer = createServer(app);
 
 // Konfigurasi Socket.io
 const io = new Server(httpServer, {
   transports: ["websocket"],
   cors: {
-    origin: process.env.FRONTEND_URL || "*",
+    origin: process.env.FRONTEND_URL || "https://pangankufresh.com",
     methods: ["GET", "POST"]
   },
 });
