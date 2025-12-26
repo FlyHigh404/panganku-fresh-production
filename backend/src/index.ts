@@ -115,6 +115,10 @@ app.use("/notify", createNotifyRouter(io));
 // Health Check untuk Monitoring Render
 app.get("/health", (req, res) => res.send("Realtime Server is Healthy"));
 
+app.get("/", (req, res) => {
+  res.status(200).send("Server is healthy and running!");
+});
+
 // Gunakan process.env.PORT agar bisa berjalan di Render
 const PORT = process.env.PORT || 4000;
 httpServer.listen(PORT, () => {
