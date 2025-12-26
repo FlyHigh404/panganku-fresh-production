@@ -3,7 +3,7 @@ import { authenticate } from "../../../middleware/auth.middleware";
 import { 
   updateCategory,
   deleteCategory 
-} from "@/app/api/admin/categories/[id]/categoriesById";
+} from "./categoriesById";
 
 const router = Router();
 
