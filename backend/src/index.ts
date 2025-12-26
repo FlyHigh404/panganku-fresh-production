@@ -106,7 +106,7 @@ app.use('/app/api/profile', addressByIdRoutes);
 app.use('/app/api/profile', addressPrimaryRoutes);
 app.use('/app/api/profile', profileOrderRoutes);
 
-app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
 app.use('/app/api/upload', uploadRoutes);
 
 // Inisialisasi API Routes untuk Internal Trigger
