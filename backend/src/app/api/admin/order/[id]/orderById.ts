@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { prisma } from "@/lib/prisma";
-import { AuthRequest } from "@/app/api/middleware/auth.middleware";
+import { prisma } from "../../../../../lib/prisma";
+import { AuthRequest } from "../../../middleware/auth.middleware";
 
 // GET Order Detail by ID (Admin)
 export const getAdminOrderById = async (req: AuthRequest, res: Response) => {

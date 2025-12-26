@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../../../lib/prisma";
 
 // GET All Products
 export const getAllProducts = async (req: Request, res: Response) => {

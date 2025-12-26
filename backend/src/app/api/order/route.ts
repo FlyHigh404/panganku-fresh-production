@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrder } from "@/app/api/order/order";
+import { createOrder } from "../../api/order/order";
 import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();

@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { AuthRequest } from "@/app/api/middleware/auth.middleware";
+import { prisma } from "../../../../../lib/prisma";
+import { AuthRequest } from "../../../middleware/auth.middleware";
 import { Response } from "express";
 
 // UPDATE Category by ID (Admin)

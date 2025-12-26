@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "@/app/api/middleware/auth.middleware";
+import { authenticate } from "../../../middleware/auth.middleware";
 import { updateProduct, deleteProduct } from "./productsById";
 
 const router = Router()

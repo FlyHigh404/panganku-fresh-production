@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import midtransClient from "midtrans-client";
 
 export const processCheckout = async (req: any, res: Response) => {

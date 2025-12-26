@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { processCheckout } from "@/app/api/cart/checkout/checkout";
+import { processCheckout } from "../../cart/checkout/checkout";
 import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();

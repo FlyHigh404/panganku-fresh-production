@@ -7,46 +7,46 @@ import { setupSocketHandlers } from "./app/api/websocket/socketHandler";
 import { createNotifyRouter } from "./app/api/websocket/route";
 
 // admin routes
-import adminCategories from "@/app/api/admin/categories/route";
-import adminCategoriesById from "@/app/api/admin/categories/[id]/route";
-import adminCustomers from "@/app/api/admin/customers/route";
-import adminCustomersById from "@/app/api/admin/customers/[id]/route";
-import adminDashboard from "@/app/api/admin/dashboard/route";
-import adminNotifications from "@/app/api/admin/notifications/route";
-import adminOrder from "@/app/api/admin/order/route";
-import adminOrderById from "@/app/api/admin/order/[id]/route";
-import adminProducts from "@/app/api/admin/products/route";
-import adminProductsById from "@/app/api/admin/products/[id]/route";
-import adminProfile from "@/app/api/admin/profile/route";
-import adminPassword from "@/app/api/admin/profile/password/route";
-import adminReplyReview from "@/app/api/admin/reply-review/route";
+import adminCategories from "./app/api/admin/categories/route";
+import adminCategoriesById from "./app/api/admin/categories/[id]/route";
+import adminCustomers from "./app/api/admin/customers/route";
+import adminCustomersById from "./app/api/admin/customers/[id]/route";
+import adminDashboard from "./app/api/admin/dashboard/route";
+import adminNotifications from "./app/api/admin/notifications/route";
+import adminOrder from "./app/api/admin/order/route";
+import adminOrderById from "./app/api/admin/order/[id]/route";
+import adminProducts from "./app/api/admin/products/route";
+import adminProductsById from "./app/api/admin/products/[id]/route";
+import adminProfile from "./app/api/admin/profile/route";
+import adminPassword from "./app/api/admin/profile/password/route";
+import adminReplyReview from "./app/api/admin/reply-review/route";
 
 // auth routes
-import signUpRoutes from "@/app/api/auth/signup/route";
-import signInRoutes from "@/app/api/auth/[...nextauth]/route";
-import googleRoutes from "@/app/api/auth/google/route";
+import signUpRoutes from "./app/api/auth/signup/route";
+import signInRoutes from "./app/api/auth/[...nextauth]/route";
+import googleRoutes from "./app/api/auth/google/route";
 
-import cartRoutes from "@/app/api/cart/route";
-import notificationRoutes from "@/app/api/notifications/route";
-import orderRoutes from "@/app/api/order/route";
-import allProducts from "@/app/api/all-products/route";
+import cartRoutes from "./app/api/cart/route";
+import notificationRoutes from "./app/api/notifications/route";
+import orderRoutes from "./app/api/order/route";
+import allProducts from "./app/api/all-products/route";
 
 // products routes
-import productRoutes from "@/app/api/products/route";
-import categoriesRoutes from "@/app/api/products/categories/route";
-import searchRoutes from "@/app/api/products/search/route";
-import productByIdRoutes from "@/app/api/products/[id]/route";
-import relatedProduct from "@/app/api/products/[id]/produk-terkait/route";
+import productRoutes from "./app/api/products/route";
+import categoriesRoutes from "./app/api/products/categories/route";
+import searchRoutes from "./app/api/products/search/route";
+import productByIdRoutes from "./app/api/products/[id]/route";
+import relatedProduct from "./app/api/products/[id]/produk-terkait/route";
 
 // profile routes
-import profileRoutes from "@/app/api/profile/route";
-import addressRoutes from "@/app/api/profile/address/route";
-import addressByIdRoutes from "@/app/api/profile/address/[id]/route";
-import addressPrimaryRoutes from "@/app/api/profile/address-primary/route";
-import profileOrderRoutes from "@/app/api/profile/order/route";
+import profileRoutes from "./app/api/profile/route";
+import addressRoutes from "./app/api/profile/address/route";
+import addressByIdRoutes from "./app/api/profile/address/[id]/route";
+import addressPrimaryRoutes from "./app/api/profile/address-primary/route";
+import profileOrderRoutes from "./app/api/profile/order/route";
 
 // upload routes
-import uploadRoutes from "@/app/api/upload/route"
+import uploadRoutes from "./app/api/upload/route"
 
 const app = express();
 app.use(express.json);

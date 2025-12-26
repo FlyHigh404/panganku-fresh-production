@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../../../../lib/prisma';
 
 // Mengambil secret dari env, pastikan as string agar tidak error overload
 const JWT_SECRET = process.env.JWT_SECRET as string;

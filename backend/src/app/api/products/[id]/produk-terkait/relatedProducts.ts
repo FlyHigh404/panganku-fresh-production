@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../../../../../lib/prisma";
 import { Request, Response } from "express";
 
 export const getRelatedProducts = async (req: Request, res: Response) => {

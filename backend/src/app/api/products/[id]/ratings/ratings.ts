@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { prisma } from "@/lib/prisma";
-import { AuthRequest } from "@/app/api/middleware/auth.middleware";
+import { prisma } from "../../../../../lib/prisma";
+import { AuthRequest } from "../../../middleware/auth.middleware";
 
 export const getProductRatings = async (req: any, res: Response) => {
     const { id } = req.params;

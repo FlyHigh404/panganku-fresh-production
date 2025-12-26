@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getCustomerById } from "./customersById";
-import { authenticate } from "@/app/api/middleware/auth.middleware";
+import { authenticate } from "../../../../api/middleware/auth.middleware";
 
 const router = Router();
 

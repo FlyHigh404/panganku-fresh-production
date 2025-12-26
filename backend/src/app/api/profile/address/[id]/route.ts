@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { updateAddress, deleteAddress } from "./addressById";
-import { authenticate } from "@/app/api/middleware/auth.middleware";
+import { authenticate } from "../../../../api/middleware/auth.middleware";
 
 const router = Router();
 
