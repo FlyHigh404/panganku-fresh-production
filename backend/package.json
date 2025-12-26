@@ -2,7 +2,7 @@
   "name": "websocket",
   "version": "1.0.0",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "dist/index.ts",
   "scripts": {
     "build": "npm install && tsc",
     "start": "node dist/index.ts",
