@@ -1,125 +1,119 @@
 import express, { Request, Response } from "express";
+import path from "path";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import bodyParser from "body-parser";
-import { prisma } from "./lib/prisma";
+import { setupSocketHandlers } from "./app/api/websocket/socketHandler";
+import { createNotifyRouter } from "./app/api/websocket/route";
+
+// admin routes
+import adminCategories from "@/app/api/admin/categories/route";
+import adminCategoriesById from "@/app/api/admin/categories/[id]/route";
+import adminCustomers from "@/app/api/admin/customers/route";
+import adminCustomersById from "@/app/api/admin/customers/[id]/route";
+import adminDashboard from "@/app/api/admin/dashboard/route";
+import adminNotifications from "@/app/api/admin/notifications/route";
+import adminOrder from "@/app/api/admin/order/route";
+import adminOrderById from "@/app/api/admin/order/[id]/route";
+import adminProducts from "@/app/api/admin/products/route";
+import adminProductsById from "@/app/api/admin/products/[id]/route";
+import adminProfile from "@/app/api/admin/profile/route";
+import adminPassword from "@/app/api/admin/profile/password/route";
+import adminReplyReview from "@/app/api/admin/reply-review/route";
+
+// auth routes
+import signUpRoutes from "@/app/api/auth/signup/route";
+import signInRoutes from "@/app/api/auth/[...nextauth]/route";
+import googleRoutes from "@/app/api/auth/google/route";
+
+import cartRoutes from "@/app/api/cart/route";
+import notificationRoutes from "@/app/api/notifications/route";
+import orderRoutes from "@/app/api/order/route";
+import allProducts from "@/app/api/all-products/route";
+
+// products routes
+import productRoutes from "@/app/api/products/route";
+import categoriesRoutes from "@/app/api/products/categories/route";
+import searchRoutes from "@/app/api/products/search/route";
+import productByIdRoutes from "@/app/api/products/[id]/route";
+import relatedProduct from "@/app/api/products/[id]/produk-terkait/route";
+
+// profile routes
+import profileRoutes from "@/app/api/profile/route";
+import addressRoutes from "@/app/api/profile/address/route";
+import addressByIdRoutes from "@/app/api/profile/address/[id]/route";
+import addressPrimaryRoutes from "@/app/api/profile/address-primary/route";
+import profileOrderRoutes from "@/app/api/profile/order/route";
+
+// upload routes
+import uploadRoutes from "@/app/api/upload/route"
 
 const app = express();
+app.use(express.json);
+
 // Pastikan CORS mengizinkan domain frontend Hostinger Anda nantinya
 app.use(cors());
-app.use(bodyParser.json());
-
 const httpServer = createServer(app);
+
+// Konfigurasi Socket.io
 const io = new Server(httpServer, {
-  // Gunakan "websocket" sebagai transport utama agar lebih stabil di Render
   transports: ["websocket"],
   cors: {
-    origin: "*", // Saat produksi, ganti dengan domain Hostinger Anda
+    origin: process.env.FRONTEND_URL || "*",
     methods: ["GET", "POST"]
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("🟢 Client connected:", socket.id);
-
-  // Sesuai dengan useOrderSocket di frontend
-  socket.on("join-order-room", (orderId: string) => {
-    socket.join(`order_${orderId}`);
-    console.log(`📦 Client joined order room: order_${orderId}`);
-  });
-
-  // Sesuai dengan useReplySocket di frontend
-  socket.on("join-user-room", (userId: string) => {
-    socket.join(`user_${userId}`);
-    console.log(`👤 User joined private room: user_${userId}`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
-  });
-});
+setupSocketHandlers(io);
 
 // Endpoint route
+// Admin
+app.use('/app/api/admin', adminCategories);
+app.use('/app/api/admin', adminCategoriesById);
+app.use('/app/api/admin', adminCustomers);
+app.use('/app/api/admin', adminCustomersById);
+app.use('/app/api/admin', adminDashboard);
+app.use('/app/api/admin', adminNotifications);
+app.use('/app/api/admin', adminOrder);
+app.use('/app/api/admin', adminOrderById);
+app.use('/app/api/admin', adminProducts);
+app.use('/app/api/admin', adminProductsById);
+app.use('/app/api/admin', adminProfile);
+app.use('/app/api/admin', adminPassword);
+app.use('/app/api/admin', adminReplyReview);
+
 // Signup
-app.post("/app/api/auth/signup", async (req: Request, res: Response) => {
-  try {
-    const { email, password, name } = req.body;
-    // Logika pendaftaran user ke Prisma di sini
-    res.json({ success: true, message: "User created" });
-  } catch (err) {
-    res.status(500).json({ error: "Signup failed" });
-  }
-});
+app.use('/app/api/auth/signup', signUpRoutes);
+app.use('/app/api/auth/[...nextauth]', signInRoutes);
+app.use('/app/api/auth/google', googleRoutes);
 
-// Route Products
-app.get("/app/api/products", async (req: Request, res: Response) => {
-  try {
-    const products = await prisma.product.findMany();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch products" });
-  }
-});
+app.use('/app/api/all-products', allProducts);
+app.use('/app/api/cart', cartRoutes);
+app.use('/app/api/notifications', notificationRoutes);
+app.use('/app/api/order', orderRoutes);
 
-// Route Search Products
-app.get("/app/api/products/search", async (req: Request, res: Response) => {
-  const { q } = req.query;
-  try {
-    const products = await prisma.product.findMany({
-      where: { name: { contains: String(q), mode: 'insensitive' } }
-    });
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: "Search failed" });
-  }
-});
+// Products
+app.use('/app/api/products', productRoutes);
+app.use('/app/api/products', categoriesRoutes);
+app.use('/app/api/products', searchRoutes);
+app.use('/app/api/products', productByIdRoutes);
+app.use('/app/api/products', relatedProduct);
 
-// Route Categories
-app.get("/app/api/products/categories", async (req: Request, res: Response) => {
-  try {
-    const categories = await prisma.category.findMany();
-    res.json(categories);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch categories" });
-  }
-});
+//Profile
+app.use('/app/api/profile', profileRoutes);
+app.use('/app/api/profile', addressRoutes);
+app.use('/app/api/profile', addressByIdRoutes);
+app.use('/app/api/profile', addressPrimaryRoutes);
+app.use('/app/api/profile', profileOrderRoutes);
 
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+app.use('/app/api/upload', uploadRoutes);
 
-// Endpoint untuk update status order (Midtrans/Admin)
-app.post("/notify", async (req: Request, res: Response) => {
-  try {
-    const { orderId, status } = req.body;
+// Inisialisasi API Routes untuk Internal Trigger
+app.use("/notify", createNotifyRouter(io));
 
-    // Update DB
-    await prisma.order.update({ where: { id: orderId }, data: { status } });
-
-    // Kirim hanya ke room order yang spesifik agar efisien
-    io.to(`order_${orderId}`).emit("order:update", { orderId, status });
-
-    console.log(`📦 Order ${orderId} updated → ${status}`);
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ Notify error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Endpoint untuk reply admin
-app.post("/notify/reply", async (req: Request, res: Response) => {
-  try {
-    const { userId, notification } = req.body;
-
-    // Kirim hanya ke room user yang spesifik
-    io.to(`user_${userId}`).emit("notification:new", notification);
-
-    console.log(`📨 Reply notification sent to user_${userId}`);
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ Error sending reply notification:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+// Health Check untuk Monitoring Render
+app.get("/health", (req, res) => res.send("Realtime Server is Healthy"));
 
 // Gunakan process.env.PORT agar bisa berjalan di Render
 const PORT = process.env.PORT || 4000;

@@ -1,6 +1,8 @@
-import NextAuth from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { Router } from 'express';
+import { signIn } from './signin';
 
-const handler = NextAuth(authOptions);
+const router = Router();
 
-export { handler as GET, handler as POST };
+router.post('/', signIn);
+
+export default router;

@@ -1,65 +1,88 @@
-import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { Router } from "express";
+import { authenticate } from "@/app/api/middleware/auth.middleware";
+import { 
+  updateCategory,
+  deleteCategory 
+} from "@/app/api/admin/categories/[id]/categoriesById";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getServerSession(authOptions);
-  const { id } = await params;
+const router = Router();
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const isAdmin = (req: any, res: any, next: any) => {
+  if (req.user?.role !== "ADMIN") {
+    return res.status(403).json({ error: "Access denied. Admin only." });
   }
+  next();
+};
 
-  try {
-    const { name, description, imageUrl } = await req.json();
+router.use(authenticate, isAdmin);
 
-    const updatedImageUrl = imageUrl ? imageUrl : null;
+router.put("/categories/:id", updateCategory);
+router.delete("/categories/:id", deleteCategory);
 
-    const updatedCategory = await prisma.category.update({
-      where: { id },
-      data: {
-        name,
-        description,
-        imageUrl: updatedImageUrl,
-      },
-    });
+export default router;
 
-    return NextResponse.json(updatedCategory);
-  } catch (error) {
-    console.error("Error updating category:", error);
-    return NextResponse.json(
-      { error: "Failed to update category" },
-      { status: 500 }
-    );
-  }
-}
+// import { prisma } from "@/lib/prisma";
+// import { NextRequest, NextResponse } from "next/server";
+// import { getServerSession } from "next-auth/next";
+// import { authOptions } from "@/lib/auth";
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getServerSession(authOptions);
-  const { id } = await params;
+// export async function PUT(
+//   req: NextRequest,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   const session = await getServerSession(authOptions);
+//   const { id } = await params;
 
-  if (!session || session.user?.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+//   if (!session || session.user?.role !== "ADMIN") {
+//     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//   }
 
-  try {
-    await prisma.category.delete({
-      where: { id },
-    });
+//   try {
+//     const { name, description, imageUrl } = await req.json();
 
-    return NextResponse.json({ message: "Category deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting category:", error);
-    return NextResponse.json(
-      { error: "Failed to delete category" },
-      { status: 500 }
-    );
-  }
-}
+//     const updatedImageUrl = imageUrl ? imageUrl : null;
+
+//     const updatedCategory = await prisma.category.update({
+//       where: { id },
+//       data: {
+//         name,
+//         description,
+//         imageUrl: updatedImageUrl,
+//       },
+//     });
+
+//     return NextResponse.json(updatedCategory);
+//   } catch (error) {
+//     console.error("Error updating category:", error);
+//     return NextResponse.json(
+//       { error: "Failed to update category" },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+// export async function DELETE(
+//   req: NextRequest,
+//   { params }: { params: Promise<{ id: string }> }
+// ) {
+//   const session = await getServerSession(authOptions);
+//   const { id } = await params;
+
+//   if (!session || session.user?.role !== "ADMIN") {
+//     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//   }
+
+//   try {
+//     await prisma.category.delete({
+//       where: { id },
+//     });
+
+//     return NextResponse.json({ message: "Category deleted successfully" });
+//   } catch (error) {
+//     console.error("Error deleting category:", error);
+//     return NextResponse.json(
+//       { error: "Failed to delete category" },
+//       { status: 500 }
+//     );
+//   }
+// }
