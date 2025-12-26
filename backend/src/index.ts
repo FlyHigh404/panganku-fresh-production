@@ -116,6 +116,7 @@ app.use("/notify", createNotifyRouter(io));
 app.get("/health", (req, res) => res.send("Realtime Server is Healthy"));
 
 // Gunakan process.env.PORT agar bisa berjalan di Render
-httpServer.listen(+(process.env.PORT || 4000), '0.0.0.0', () => {
-  console.log(`⚡ Realtime server running on port ${process.env.PORT || 4000}`);
+const PORT = process.env.PORT || 4000;
+httpServer.listen(PORT, () => {
+  console.log(`⚡ Realtime server running on port ${PORT}`);
 });
