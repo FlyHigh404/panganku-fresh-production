@@ -106,7 +106,7 @@ export const addToCart = async (req: any, res: Response) => {
 
 export const updateCartItem = async (req: any, res: Response) => {
     try {
-        const { itemId } = req.params; // Mengambil [itemId] dari URL
+        const { id } = req.params; // Mengambil [id] dari URL
         const { quantity } = req.body;
 
         if (quantity <= 0) {
@@ -114,7 +114,7 @@ export const updateCartItem = async (req: any, res: Response) => {
         }
 
         const updatedItem = await prisma.orderItem.update({
-            where: { id: itemId },
+            where: { id: id },
             data: { quantity: Number(quantity) },
         });
 
@@ -128,10 +128,10 @@ export const updateCartItem = async (req: any, res: Response) => {
 // Fungsi untuk Hapus Item dari Cart
 export const deleteCartItem = async (req: any, res: Response) => {
     try {
-        const { itemId } = req.params;
+        const { id } = req.params;
 
         await prisma.orderItem.delete({
-            where: { id: itemId },
+            where: { id: id },
         });
 
         return res.json({ message: "Item removed" });

@@ -8,6 +8,7 @@ router.get("/:id/reviews", getProductReviews);
 router.post("/:id/reviews", authenticate, addProductReview);
 router.delete(":id/reviews", authenticate, deleteProductReview);
 
+export default router;
 // // src/app/api/products/[id]/reviews/route.ts
 // import { NextResponse } from "next/server";
 // import { prisma } from "@/lib/prisma"

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCart, addToCart, updateCartItem, deleteCartItem } from "../../../api/cart/cart";
+import { updateCartItem, deleteCartItem } from "../../../api/cart/cart";
 import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
@@ -12,13 +12,9 @@ const isCustomer = (req: any, res: any, next: any) => {
   next();
 };
 
-// Route utama (/app/api/cart)
-router.get("/", authenticate, isCustomer, getCart);
-router.post("/", authenticate, isCustomer, addToCart);
-
 // Route dengan parameter ID (/app/api/cart/:itemId)
-router.put("/:itemId", authenticate, isCustomer, updateCartItem);
-router.delete("/:itemId", authenticate, isCustomer, deleteCartItem);
+router.put("/:id", authenticate, isCustomer, updateCartItem);
+router.delete("/:id", authenticate, isCustomer, deleteCartItem);
 
 export default router;
 

@@ -2,12 +2,16 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../../../lib/prisma';
+import dotenv from "dotenv";
 
+dotenv.config();
 // Mengambil secret dari env, pastikan as string agar tidak error overload
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const signIn = async (req: Request, res: Response) => {
     try {
+
+        console.log("Data login masuk:", req.body);
         const { email, password } = req.body;
 
         // 1. Validasi Input (Sesuai logika authorize di auth.ts)

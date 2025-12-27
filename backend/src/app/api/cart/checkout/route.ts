@@ -12,7 +12,7 @@ const isCustomer = (req: any, res: any, next: any) => {
     next();
 };
 
-router.post("/", authenticate, isCustomer, processCheckout);
+router.post("/checkout", authenticate, isCustomer, processCheckout);
 
 export default router;
 
