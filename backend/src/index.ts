@@ -52,7 +52,12 @@ const app = express();
 app.use(express.json);
 
 // Pastikan CORS mengizinkan domain frontend Hostinger Anda nantinya
-app.use(cors());
+app.use(cors({
+  origin: 'https://pangankufresh.com',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 const httpServer = createServer(app);
 
 // Konfigurasi Socket.io
