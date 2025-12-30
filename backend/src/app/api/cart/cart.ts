@@ -24,7 +24,12 @@ export const getCart = async (req: any, res: Response) => {
         });
 
         if (!order) {
-            return res.status(404).json({ message: "Order not found" });
+            return res.status(200).json({
+                id: null,
+                orderItems: [],
+                totalAmount: 0,
+                message: "Cart is empty"
+            });
         }
 
         return res.json(order);

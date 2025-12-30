@@ -12,16 +12,30 @@ export const signIn = async (req: Request, res: Response) => {
     try {
 
         console.log("Data login masuk:", req.body);
-        const { email, password } = req.body;
+        const { identifier, password } = req.body;
+        // const { email, password } = req.body;
 
         // 1. Validasi Input (Sesuai logika authorize di auth.ts)
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email dan password diperlukan" });
+        // if (!email || !password) {
+        //     return res.status(400).json({ error: "Email dan password diperlukan" });
+        // }
+
+        if (!identifier || !password) {
+            return res.status(400).json({ error: "Email/Nomor HP dan password diperlukan" });
         }
 
         // 2. Cari user di database
-        const user = await prisma.user.findUnique({
-            where: { email },
+        // const user = await prisma.user.findUnique({
+        //     where: { email },
+        // });
+
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: identifier },
+                    { phone: identifier }
+                ]
+            },
         });
 
         // 3. Verifikasi User (Sesuai logika authorize di auth.ts)
@@ -40,11 +54,11 @@ export const signIn = async (req: Request, res: Response) => {
         }
 
         // 5. Buat Token JWT Asli
-        // Payload mencakup id dan role sesuai dengan callback jwt di auth.ts
         const token = jwt.sign(
             {
                 id: user.id,
                 email: user.email,
+                phone: user.phone,
                 role: user.role
             },
             JWT_SECRET,
@@ -57,6 +71,7 @@ export const signIn = async (req: Request, res: Response) => {
             user: {
                 id: user.id,
                 email: user.email,
+                phone: user.phone,
                 name: user.name,
                 role: user.role,
                 image: user.image,
