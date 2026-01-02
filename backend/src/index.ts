@@ -59,13 +59,13 @@ const app = express();
 
 // Pastikan CORS mengizinkan domain frontend Hostinger Anda nantinya
 const allowedOrigins = [
-  'https://pangankufresh.com'
-  // 'http://localhost:3000'
+  'https://pangankufresh.com',
+  'https://www.pangankufresh.com',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Izinkan request tanpa origin (seperti mobile apps atau curl)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.indexOf(origin) !== -1) {
