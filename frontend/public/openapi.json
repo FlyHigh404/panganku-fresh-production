@@ -1,0 +1,277 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Panganku Fresh Generated API Docs",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/cart": {
+      "get": {
+        "summary": "Auto generated for GET /cart",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Auto generated for POST /cart",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Auto generated for GET /products",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "Auto generated for GET /profile",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "summary": "Auto generated for PUT /profile",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "summary": "Auto generated for POST /upload",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/categories": {
+      "post": {
+        "summary": "Auto generated for POST /admin/categories",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "summary": "Auto generated for GET /admin/categories",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/customers": {
+      "get": {
+        "summary": "Auto generated for GET /admin/customers",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/products": {
+      "post": {
+        "summary": "Auto generated for POST /admin/products",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "summary": "Auto generated for GET /admin/products",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "summary": "Auto generated for POST /auth/signup",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/cart/{itemId}": {
+      "delete": {
+        "summary": "Auto generated for DELETE /cart/{itemId}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/cart/checkout": {
+      "post": {
+        "summary": "Auto generated for POST /cart/checkout",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Auto generated for GET /products/{id}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products/categories": {
+      "get": {
+        "summary": "Auto generated for GET /products/categories",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products/search": {
+      "get": {
+        "summary": "Auto generated for GET /products/search",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/profile/password": {
+      "put": {
+        "summary": "Auto generated for PUT /profile/password",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/categories/{id}": {
+      "put": {
+        "summary": "Auto generated for PUT /admin/categories/{id}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Auto generated for DELETE /admin/categories/{id}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/admin/products/{id}": {
+      "put": {
+        "summary": "Auto generated for PUT /admin/products/{id}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Auto generated for DELETE /admin/products/{id}",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products/{id}/ratings": {
+      "get": {
+        "summary": "Auto generated for GET /products/{id}/ratings",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Auto generated for POST /products/{id}/ratings",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "summary": "Auto generated for PUT /products/{id}/ratings",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Auto generated for DELETE /products/{id}/ratings",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/products/{id}/review": {
+      "get": {
+        "summary": "Auto generated for GET /products/{id}/review",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "summary": "Auto generated for POST /products/{id}/review",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Auto generated for DELETE /products/{id}/review",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}
