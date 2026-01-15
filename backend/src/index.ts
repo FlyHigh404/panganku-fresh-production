@@ -141,7 +141,7 @@ app.use('/app/api/profile', addressPrimaryRoutes);
 app.use('/app/api/profile', profileOrderRoutes);
 app.use('/app/api/profile', profileRiwayat);
 
-// app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+// Upload foto dan lain2
 app.use('/app/api/upload', uploadRoutes);
 
 // Inisialisasi API Routes untuk Internal Trigger
@@ -154,7 +154,7 @@ app.get("/", (req, res) => {
   res.status(200).send("Server is healthy and running!");
 });
 
-// Gunakan process.env.PORT agar bisa berjalan di Render
+// Konfigurasi port dan URL
 const PORT = process.env.PORT || 4000;
 httpServer.listen(PORT, () => {
   console.log(`⚡ Realtime server running on port ${PORT}`);
