@@ -61,10 +61,10 @@ export default function ProfilPage() {
         {/* Image container with larger negative margin */}
         <div className="mb-4 -mt-28">
           <Image
-            src={user.image || "/panganku-fresh-icon.png"}
-            alt="Profile"
-            width={92}  // Increased size
-            height={92}  // Increased size
+            src={user.image || "/polar-bear.png"}
+            alt="Profile Image"
+            width={92}
+            height={92}
             className="w-24 h-24 rounded-full object-cover"
           />
         </div>

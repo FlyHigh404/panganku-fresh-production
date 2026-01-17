@@ -21,6 +21,7 @@ export default function ProfilForm() {
   const [uploadSuccess, setUploadSuccess] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const [isFirstEdit, setIsFirstEdit] = useState(false)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
   const router = useRouter()
   const token = localStorage.getItem('token');
 
@@ -95,17 +96,27 @@ export default function ProfilForm() {
     setSuccess(false)
 
     try {
+      const payload: any = {
+        name: formData.name,
+        phone: formData.phone,
+        birthdate: formData.birthdate,
+        gender: formData.gender,
+      };
+      
+      // Only include image if it has a value
+      if (formData.profileImage && formData.profileImage.trim() !== "") {
+        payload.image = formData.profileImage;
+      }
+      
+      // console.log("Saving profile with image:", formData.profileImage);
+      // console.log("Full payload:", payload);
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          birthdate: formData.birthdate,
-          gender: formData.gender,
-          image: formData.profileImage,
-        }),
+        body: JSON.stringify(payload),
       })
+      // console.log("response: ", response)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
@@ -117,19 +128,71 @@ export default function ProfilForm() {
 
       setTimeout(() => router.push("/profil"), 1500)
     } catch (error) {
-      console.error("Error saving profile:", error)
+      // console.error("Error saving profile:", error)
       setError(error instanceof Error ? error.message : "Gagal menyimpan profil. Silakan coba lagi.")
     } finally {
       setSaveLoading(false)
     }
   }
 
+  // Helper function to compress and resize image
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (event) => {
+        const img = document.createElement('img')
+        img.src = event.target?.result as string
+        img.onload = () => {
+          const MAX_SIZE = 512
+          let { width, height } = img
+
+          // compress
+          if (width > MAX_SIZE || height > MAX_SIZE) {
+            const scale = Math.min(MAX_SIZE / width, MAX_SIZE / height)
+            width = Math.round(width * scale)
+            height = Math.round(height * scale)
+          }
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'))
+            return
+          }
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
+          
+          //compress the data
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error('Failed to compress image'))
+                return
+              }
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              })
+              resolve(compressedFile)
+            },
+            'image/jpeg',
+            0.85 // Quality: 0.85 (85%)
+          )
+        }
+        img.onerror = () => reject(new Error('Failed to load image'))
+      }
+      reader.onerror = () => reject(new Error('Failed to read file'))
+    })
+  }
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return
     const file = e.target.files[0]
 
-    if (file.size > 1024 * 1024) {
-      setError("Ukuran file maksimal 1MB")
+    // Check file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+      setError("Ukuran file maksimal 2MB")
       e.target.value = ""
       return
     }
@@ -140,8 +203,12 @@ export default function ProfilForm() {
       return
     }
 
-    const uploadData = new FormData()
-    uploadData.append("file", file)
+    // Show preview immediately
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setPreviewImage(event.target?.result as string)
+    }
+    reader.readAsDataURL(file)
 
     setUploadLoading(true)
     setError(null)
@@ -149,23 +216,48 @@ export default function ProfilForm() {
     const token = localStorage.getItem('token');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/upload`, {
+      // Compress and resize image to 512x512
+      const compressedFile = await compressImage(file)
+
+      // Check compressed file size
+      if (compressedFile.size > 2 * 1024 * 1024) {
+        setError("File terlalu besar setelah kompresi. Silakan coba gambar lain.")
+        setPreviewImage(null)
+        e.target.value = ""
+        setUploadLoading(false)
+        return
+      }
+
+      const uploadData = new FormData()
+      uploadData.append("file", compressedFile)
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const uploadUrl = `${apiUrl}/app/api/upload`;
+
+      const res = await fetch(uploadUrl, {
         method: "POST", body: uploadData, headers: {
           "Authorization": `Bearer ${token}`
         }
       })
+      
+      console.log("🔵 Frontend - Upload response status:", res.status);
+      console.log("🔵 Frontend - Upload response ok:", res.ok);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
         throw new Error(errorData.message || "Upload gagal")
       }
 
       const data = await res.json()
-      setFormData(prev => ({ ...prev, profileImage: data.url || "" }))
+      const uploadedUrl = data.url || ""
+      
+      setFormData(prev => ({ ...prev, profileImage: uploadedUrl }))
+      
       setUploadSuccess(true)
       setTimeout(() => setUploadSuccess(false), 3000)
     } catch (err) {
       console.error("Upload error:", err)
       setError(err instanceof Error ? err.message : "Gagal mengupload gambar. Silakan coba lagi.")
+      setPreviewImage(null)
     } finally {
       setUploadLoading(false)
       e.target.value = ""
@@ -237,13 +329,46 @@ export default function ProfilForm() {
                 <Loader2 className="w-8 h-8 text-white animate-spin" />
               </div>
             )}
-            <Image
-              src={formData.profileImage || "/polar-bear.png"}
-              alt="Foto Profil"
-              width={200}
-              height={164}
-              className="object-cover w-full h-full"
-            />
+            {previewImage ? (
+              // Use regular img tag for data URL preview
+              <img
+                src={previewImage}
+                alt="Foto Profil Preview"
+                className="object-cover w-full h-full"
+              />
+            ) : formData.profileImage ? (
+              // Use regular img tag for uploaded images to avoid Next.js Image issues
+              <img
+                src={
+                  formData.profileImage.startsWith('http') 
+                    ? formData.profileImage 
+                    : formData.profileImage.startsWith('/')
+                    ? `${process.env.NEXT_PUBLIC_API_URL}${formData.profileImage}`
+                    : `${process.env.NEXT_PUBLIC_API_URL}/${formData.profileImage}`
+                }
+                alt="Foto Profil"
+                className="object-cover w-full h-full"
+                onError={(e) => {
+                  // Fallback to default if image fails to load
+                  const target = e.target as HTMLImageElement
+                  target.src = "/polar-bear.png"
+                }}
+                onLoad={() => {
+                  // Image loaded successfully, safe to clear preview
+                  if (previewImage) {
+                    setTimeout(() => setPreviewImage(null), 100)
+                  }
+                }}
+              />
+            ) : (
+              <Image
+                src="/polar-bear.png"
+                alt="Foto Profil"
+                width={200}
+                height={164}
+                className="object-cover w-full h-full"
+              />
+            )}
           </div>
 
           <input
@@ -282,8 +407,8 @@ export default function ProfilForm() {
           )}
 
           <p className="mt-2 text-xs text-gray-500 text-center">
-            Ukuran gambar maks. 1MB <br />
-            Format: .JPEG, .PNG
+            Ukuran gambar maks. 2MB <br />
+            Format: .JPEG, .PNG <br />
           </p>
         </div>
 
