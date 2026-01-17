@@ -142,6 +142,10 @@ app.use('/app/api/profile', profileOrderRoutes);
 app.use('/app/api/profile', profileRiwayat);
 
 // Upload foto dan lain2
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "public/uploads"))
+);
 app.use('/app/api/upload', uploadRoutes);
 
 // Inisialisasi API Routes untuk Internal Trigger

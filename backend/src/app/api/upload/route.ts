@@ -7,10 +7,12 @@ import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 
+const uploadDir = path.join(process.cwd(), "public/uploads");
+
 // Konfigurasi Penyimpanan Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/uploads"); // Pastikan folder ini sudah ada
+    cb(null, uploadDir); // Pastikan folder ini sudah ada
   },
   filename: (req, file, cb) => {
     const fileExtension = path.extname(file.originalname);

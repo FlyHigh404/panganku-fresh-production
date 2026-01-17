@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { Request, Response, Express } from "express";
+import path from "path";
 
 export const uploadFileResponse = (req: Request, res: Response) => {
   try {
@@ -7,7 +8,7 @@ export const uploadFileResponse = (req: Request, res: Response) => {
     }
 
     // URL untuk akses file (Multer sudah menyimpan file ke folder public/uploads)
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const fileUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;
 
     return res.json({ url: fileUrl });
   } catch (error) {
