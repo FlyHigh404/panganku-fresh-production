@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { prisma } from "../../../../lib/prisma";
 import { AuthRequest } from "../../middleware/auth.middleware";
-import { checkDeliveryRange } from "./location";
+import { checkDeliveryRange } from "../../shipping/location";
 
 // GET Fetch All Addresses
 export const getAddresses = async (req: AuthRequest, res: Response) => {
@@ -22,12 +22,12 @@ export const addAddress = async (req: AuthRequest, res: Response) => {
         console.log('req body: ', req.body)
 
         // Validasi Input
-        if (!recipientName || !phoneNumber || !fullAddress ) {
+        if (!recipientName || !phoneNumber || !fullAddress) {
             return res.status(400).json({
                 message: "Nama penerima, No Telepon, dan Alamat harus diisi"
             });
         }
-        
+
         // Validasi Format Telepon
         const phoneRegex = /^[\d+\-\s()]+$/;
         if (!phoneRegex.test(phoneNumber)) {
@@ -49,7 +49,7 @@ export const addAddress = async (req: AuthRequest, res: Response) => {
                 });
             }
         }
-        
+
         // 4. Create ke Database
         const addressPayload = {
             userId: req.user!.id,

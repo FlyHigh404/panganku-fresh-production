@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { getAddresses, addAddress } from "./address";
-import { getGeoCode} from "./location"
 import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
@@ -14,8 +13,6 @@ const isCustomer = (req: any, res: any, next: any) => {
 
 router.get("/address", authenticate, isCustomer, getAddresses);
 router.post("/address", authenticate, isCustomer, addAddress);
-
-router.get('/geocode', authenticate, isCustomer, getGeoCode);
 
 export default router;
 
@@ -64,7 +61,7 @@ export default router;
 //   const phoneRegex = /^[\d+\-\s()]+$/;
 //   if (!phoneRegex.test(phoneNumber)) {
 //     return NextResponse.json(
-//       { 
+//       {
 //         message: "Nomor telepon harus berupa angka.",
 //       },
 //       { status: 400 }
@@ -82,7 +79,7 @@ export default router;
 
 //       if (existingPrimaryAddress) {
 //         return NextResponse.json(
-//           { 
+//           {
 //             message: "Anda sudah memiliki alamat utama. Tolong hapus alamat utama saat ini terlebih dahulu.",
 //           },
 //           { status: 400 }

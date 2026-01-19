@@ -55,6 +55,9 @@ import profileRiwayat from "./app/api/profile/riwayat-transaksi/route";
 // upload routes
 import uploadRoutes from "./app/api/upload/route"
 
+// location, shipping routes
+import shippingRoutes from "./app/api/shipping/route"
+
 const app = express();
 
 // Pastikan CORS mengizinkan domain frontend Hostinger Anda nantinya
@@ -147,6 +150,9 @@ app.use(
   express.static(path.join(process.cwd(), "public/uploads"))
 );
 app.use('/app/api/upload', uploadRoutes);
+
+// shipping
+app.use('/app/api/shipping', shippingRoutes);
 
 // Inisialisasi API Routes untuk Internal Trigger
 app.use("/notify", createNotifyRouter(io));

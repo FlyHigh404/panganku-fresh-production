@@ -123,7 +123,7 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
     setIsSearching(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile/geocode?q=${encodeURIComponent(fullString)}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/shipping/geocode?q=${encodeURIComponent(fullString)}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -175,7 +175,7 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
       showToast("Silakan tentukan lokasi pada peta terlebih dahulu.", "warning");
       return;
     }
-    const fullAddress = `Jl. ${addressDetails.street} No. ${addressDetails.houseNumber}, Kel/Desa ${addressDetails.kelurahan}, Kec. ${addressDetails.kecamatan}, ${addressDetails.regency}.`;
+    const fullAddress = `Jalan ${addressDetails.street} No. ${addressDetails.houseNumber}, Kel/Desa ${addressDetails.kelurahan}, Kec. ${addressDetails.kecamatan}, ${addressDetails.regency}.`;
 
     const newAddress: Address = {
       id: Date.now().toString(),
