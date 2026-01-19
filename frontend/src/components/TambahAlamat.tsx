@@ -5,6 +5,8 @@ import InputBox from "@/components/InputBox"
 import { User, Smartphone, Home, MapPin, ClipboardList, Search, CheckCircle } from "lucide-react"
 import { useToast, Toast } from "@/components/Toast"
 import { useMapEvents } from 'react-leaflet'
+import L from 'leaflet';
+import { renderToStaticMarkup } from 'react-dom/server';
 import 'leaflet/dist/leaflet.css'
 
 type Address = {
@@ -54,6 +56,17 @@ const Checkbox = ({
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false })
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false })
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false })
+
+// make the icon
+const customIcon = L.divIcon({
+  html: renderToStaticMarkup(
+     <MapPin size={24} fill="#ff0000"></MapPin>
+  ),
+  className: 'custom-leaflet-icon', // prevents default leaflet styles
+  iconSize: [32, 32],
+  iconAnchor: [16, 32], // points the bottom center of the icon to the coord
+});
+
 
 const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
   const [recipientName, setRecipientName] = useState("")
@@ -331,6 +344,7 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
                   <Marker
                     position={[tempCoords.lat, tempCoords.lng]}
                     draggable={true}
+                    icon={customIcon}
                     eventHandlers={{
                       dragend: (e) => {
                         const marker = e.target;
