@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getAddresses, addAddress } from "./address";
+import { getGeoCode} from "./location"
 import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
@@ -13,6 +14,8 @@ const isCustomer = (req: any, res: any, next: any) => {
 
 router.get("/address", authenticate, isCustomer, getAddresses);
 router.post("/address", authenticate, isCustomer, addAddress);
+
+router.get('/geocode', authenticate, isCustomer, getGeoCode);
 
 export default router;
 
