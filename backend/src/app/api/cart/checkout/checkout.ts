@@ -1,6 +1,8 @@
-import { Response } from "express";
+import { response, Response } from "express";
 import { prisma } from "../../../../lib/prisma";
 import midtransClient from "midtrans-client";
+import { fetchPrimaryAddressInternal } from "../../profile/address-primary/address-primary";
+import { calculateShippingCostInternal } from "../../shipping/ongkir";
 
 export const processCheckout = async (req: any, res: Response) => {
   try {
@@ -29,13 +31,21 @@ export const processCheckout = async (req: any, res: Response) => {
       return res.status(400).json({ error: "Order cannot be processed" });
     }
 
-    // 3. Hitung ulang total (Keamanan: jangan percaya total dari frontend)
-    const ONGKIR = 20000;
+    // get the ongkir
+    const primaryAddress = await fetchPrimaryAddressInternal(order.userId);
+    if (!primaryAddress) {
+      return res.status(400).json({ error: "Please set a primary address first" });
+    }
+
+    const shippingInfo = await calculateShippingCostInternal(primaryAddress.id);
+    const ongkir = shippingInfo.shippingCost;
+
+    // calculate total amount
     const productTotal = order.orderItems.reduce(
       (sum: number, item: any) => sum + Number(item.unitPrice) * item.quantity,
       0
     );
-    const finalTotal = productTotal + ONGKIR;
+    const finalTotal = productTotal + ongkir;
 
     // 4. Update order di database
     await prisma.order.update({

@@ -25,7 +25,7 @@ const CheckoutPage: React.FC = () => {
   const [processingCheckout, setProcessingCheckout] = useState(false);
   const [openAlamat, setOpenAlamat] = useState(false);
   const [qrisUrl, setQrisUrl] = useState<string | null>(null);
-  const [ongkir, setOngkir] = useState(0);
+  const [ongkir, setOngkir] = useState(7000);
   const [isEstimating, setIsEstimating] = useState(false);
   
   const diskon = 0;
@@ -85,10 +85,11 @@ const CheckoutPage: React.FC = () => {
   };
 
   const estimateShippingCost = async () => {
-    if (!alamatAktif?.catatan) return;
+    if (!alamatAktif?.id) return;
   
     const token = localStorage.getItem('token');
     try {
+      setIsEstimating(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/shipping/estimate?addressId=${alamatAktif.id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -174,6 +175,7 @@ const CheckoutPage: React.FC = () => {
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({
           paymentMethod,
+          ongkir,
         }),
       });
 
