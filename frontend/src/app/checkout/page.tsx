@@ -25,8 +25,9 @@ const CheckoutPage: React.FC = () => {
   const [processingCheckout, setProcessingCheckout] = useState(false);
   const [openAlamat, setOpenAlamat] = useState(false);
   const [qrisUrl, setQrisUrl] = useState<string | null>(null);
-
-  const ongkir = 20000;
+  const [ongkir, setOngkir] = useState(0);
+  const [isEstimating, setIsEstimating] = useState(false);
+  
   const diskon = 0;
   const totalAmount = Number(order?.totalAmount) || 0;
   const totalQuantity =
@@ -39,8 +40,9 @@ const CheckoutPage: React.FC = () => {
       0
     ) || 0;
 
-  const subtotal = productTotal;
-  const totalPembayaran = subtotal + ongkir - diskon;
+  const subTotal = productTotal;
+
+  const totalPembayaran = productTotal + ongkir - diskon
 
   useOrderSocket(order?.id, (status) => {
     if (status === "PROCESSING") {
@@ -82,6 +84,31 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
+  const estimateShippingCost = async () => {
+    if (!alamatAktif?.catatan) return;
+  
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/shipping/estimate?addressId=${alamatAktif.id}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setOngkir(data.shippingCost);
+        console.log(`Ongkir: `, ongkir)
+        
+        setOrder((prev: any) => ({
+          ...prev,
+          shippingCost: data.shippingCost
+        }));
+      }
+    } catch (error) {
+      console.error("Shipping estimation failed:", error);
+    } finally {
+      setIsEstimating(false);
+    }
+  };
 
   useEffect(() => {
     const fetchCheckoutData = async () => {
@@ -124,6 +151,12 @@ const CheckoutPage: React.FC = () => {
 
     fetchCheckoutData();
   }, []);
+
+  useEffect(() => {
+    if (alamatAktif?.id) {
+      estimateShippingCost();
+    }
+  }, [alamatAktif?.id]);
 
   const processCheckout = async () => {
     const token = localStorage.getItem('token');
@@ -422,7 +455,7 @@ const CheckoutPage: React.FC = () => {
                 <div className="pt-1 text-xs space-y-1">
                   <div className="flex justify-between">
                     <span>Total harga ({totalQuantity} Produk)</span>
-                    <span>Rp{subtotal.toLocaleString("id-ID")}</span>
+                    <span>Rp{subTotal.toLocaleString("id-ID")}</span>
                   </div>
                   <div className="flex justify-between text-green-600">
                     <span>Potongan Diskon</span>
@@ -430,7 +463,11 @@ const CheckoutPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Ongkos Kirim</span>
-                    <span>Rp{ongkir.toLocaleString("id-ID")}</span>
+                    {isEstimating ? (
+                      <span className="animate-pulse bg-gray-200 h-4 w-20 rounded"></span>
+                    ) : (
+                      <span>Rp{ongkir.toLocaleString("id-ID")}</span>
+                    )}
                   </div>
                 </div>
 
@@ -523,7 +560,7 @@ const CheckoutPage: React.FC = () => {
                 <div className="pt-2 text-xs space-y-2">
                   <div className="flex justify-between">
                     <span>Total harga ({totalQuantity} Produk)</span>
-                    <span>Rp{subtotal.toLocaleString("id-ID")}</span>
+                    <span>Rp{subTotal.toLocaleString("id-ID")}</span>
                   </div>
                   <div className="flex justify-between text-green-600">
                     <span>Potongan Diskon</span>

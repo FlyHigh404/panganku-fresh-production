@@ -306,8 +306,10 @@ const CartPage = () => {
     0
   );
   const discount = 0;
-  const shippingEstimate = 20000;
-  const finalTotal = totalPrice - discount + shippingEstimate;
+
+  // const shippingEstimate = 20000;  // GANTI KE FETCH KE BACKEND
+  
+  const finalTotal = totalPrice - discount;
 
   const handleSelectAll = (checked: boolean) => {
     setCartItems((items) =>
@@ -730,12 +732,12 @@ const CartPage = () => {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center">
+                    {/* <div className="flex justify-between items-center">
                       <span className="text-gray-600">Estimasi Ongkir</span>
                       <span className="font-semibold text-gray-900">
                         Rp{shippingEstimate.toLocaleString("id-ID")}
                       </span>
-                    </div>
+                    </div> */}
 
                     <div className="border-t border-gray-300 border-dashed pt-2 md:pt-3">
                       <div className="flex justify-between items-center font-bold text-gray-900">
