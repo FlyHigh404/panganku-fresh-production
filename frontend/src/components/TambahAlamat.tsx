@@ -1,8 +1,11 @@
 "use client"
 import React, { useState, useEffect } from "react"
+import dynamic from 'next/dynamic'
 import InputBox from "@/components/InputBox"
-import { User, Smartphone, Home, MapPin, ClipboardList } from "lucide-react"
+import { User, Smartphone, Home, MapPin, ClipboardList, Search, CheckCircle } from "lucide-react"
 import { useToast, Toast } from "@/components/Toast"
+import { useMapEvents } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css'
 
 type Address = {
   id: string
@@ -47,15 +50,45 @@ const Checkbox = ({
   </label>
 )
 
+// map
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false })
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false })
+const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false })
+
 const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
   const [recipientName, setRecipientName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [labelAddress, setLabelAddress] = useState("")
-  const [fullAddress, setFullAddress] = useState("")
+  const [addressDetails, setAddressDetails] = useState({
+    street: "",
+    houseNumber: "",
+    kelurahan: "",
+    kecamatan: "",
+    regency: "Bekasi", // Default
+  })
+  const [tempCoords, setTempCoords] = useState<{ lat: number, lng: number } | null>(null)
+  const [finalCoords, setFinalCoords] = useState<{ lat: number, lng: number } | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
   const [note, setNote] = useState("")
   const [isPrimary, setIsPrimary] = useState(false)
   const [agree, setAgree] = useState(false)
   const { toast, showToast, hideToast } = useToast()
+
+  // store coordinate
+  const STORE_COORDS = {
+    lat: -6.253669190045658, lng: 107.08002424641867
+  }
+  // calculate radius
+  const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -68,6 +101,16 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
     }
   }, [isOpen])
 
+  // on map pin click
+  const MapClickHandler = ({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) => {
+    useMapEvents({
+      click: (e) => {
+        onMapClick(e.latlng.lat, e.latlng.lng);
+      },
+    });
+    return null;
+  };
+
   const handlePhoneNumberChange = (value: string) => {
     const numericValue = value.replace(/[^0-9]/g, '')
     setPhoneNumber(numericValue)
@@ -75,22 +118,75 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
 
   if (!isOpen) return null
 
+  const handleSearchLocation = async () => {
+    const fullString = `${addressDetails.street} ${addressDetails.houseNumber}, ${addressDetails.kelurahan}, ${addressDetails.kecamatan}, ${addressDetails.regency}`;
+    setIsSearching(true);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile/geocode?q=${encodeURIComponent(fullString)}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      const data = await res.json();
+
+      if (data.length > 0) {
+        setTempCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
+      } else {
+        // Fallback: Try to get user's current GPS if address not found
+        navigator.geolocation.getCurrentPosition(
+          (pos) => setTempCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => showToast("Alamat tidak ditemukan. Silakan tentukan manual di peta.", "warning")
+        );
+      }
+    } catch (err) {
+      showToast("Gagal mencari lokasi.", "error");
+    } finally {
+      setIsSearching(false);
+    }
+  }
+
+  const handleSaveLocation = () => {
+    if (!tempCoords) {
+      showToast("Silakan cari lokasi terlebih dahulu.", "warning");
+      return;
+    }
+
+    const distance = getDistance(STORE_COORDS.lat, STORE_COORDS.lng, tempCoords.lat, tempCoords.lng);
+
+    if (distance > 10) {
+      showToast(`Maaf, lokasi Anda (${distance.toFixed(1)}km) di luar jangkauan pengiriman kami (Max 10km).`, "error");
+      setFinalCoords(null); // Clear final coords if out of range
+      return;
+    }
+
+    setFinalCoords(tempCoords);
+    showToast(`Lokasi tersimpan di ${tempCoords.lat.toFixed(5)}, ${tempCoords.lng.toFixed(5)}`, "success");
+  }
+
   const handleSave = async () => {
     const token = localStorage.getItem('token');
-    if (!recipientName || !phoneNumber || !fullAddress || !agree) {
+    if (!recipientName || !phoneNumber || !addressDetails.street || !agree) {
       showToast("Mohon isi semua field yang wajib diisi dan setujui syarat & ketentuan.", "warning")
       return
     }
+    if (!finalCoords) {
+      showToast("Silakan tentukan lokasi pada peta terlebih dahulu.", "warning");
+      return;
+    }
+    const fullAddress = `Jl. ${addressDetails.street} No. ${addressDetails.houseNumber}, Kel/Desa ${addressDetails.kelurahan}, Kec. ${addressDetails.kecamatan}, ${addressDetails.regency}.`;
 
     const newAddress: Address = {
       id: Date.now().toString(),
       recipientName,
       phoneNumber,
-      label: labelAddress,
-      fullAddress,
-      note: note || undefined,
+      label: labelAddress || "Alamat",
+      fullAddress: fullAddress,
+      note: `${note} coords: ${finalCoords.lat}:${finalCoords.lng}` || `coords: ${finalCoords.lat}:${finalCoords.lng}`,
       isPrimary,
     }
+    console.log('New address :', JSON.stringify(newAddress))
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile/address`, {
@@ -109,7 +205,15 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
         setRecipientName("")
         setPhoneNumber("")
         setLabelAddress("")
-        setFullAddress("")
+        setAddressDetails({
+          street: "",
+          houseNumber: "",
+          kelurahan: "",
+          kecamatan: "",
+          regency: "Bekasi",
+        });
+        setTempCoords(null);
+        setFinalCoords(null);
         setNote("")
         setIsPrimary(false)
         setAgree(false)
@@ -135,7 +239,7 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
       className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-sm z-[10002] font-jakarta px-3 sm:px-0"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white w-full sm:w-[650px] max-h-[90vh] sm:max-h-[85vh] rounded-xl sm:rounded-2xl p-4 sm:p-6 relative shadow-2xl z-[10001]">
+      <div className="bg-white sm:w-[650px] max-h-[90vh] sm:max-h-[85vh] rounded-xl sm:rounded-2xl p-4 sm:p-6 relative shadow-2xl z-[10001]">
         <div className="relative flex items-center border-b border-gray-200 pb-2 sm:pb-3 mb-4">
           <h2 className="text-lg sm:text-2xl font-bold text-gray-800 text-center w-full">
             Tambah Alamat
@@ -149,8 +253,9 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
         </div>
 
         {/* Form */}
-        <div className="space-y-3 sm:space-y-4 max-h-[calc(90vh-180px)] sm:max-h-[calc(85vh-180px)] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
-          <p className="font-semibold text-gray-800 text-sm sm:text-base">Isi detail alamat</p>
+        <div className="space-y-3 sm:space-y-4 max-h-[calc(90vh-50px)] sm:max-h-[calc(85vh-180px)] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
+
+          <p className="font-semibold text-gray-800 text-sm sm:text-base">Isi alamat</p>
           <InputBox
             label="Nama Penerima"
             value={recipientName}
@@ -172,13 +277,92 @@ const AddAddress: React.FC<AddAddressProps> = ({ isOpen, onClose, onSave }) => {
             placeholder="misalnya Rumah, Kantor"
             icon={<Home size={18} className="sm:w-5 sm:h-5 text-gray-400" />}
           />
-          <InputBox
-            label="Alamat Lengkap"
-            value={fullAddress}
-            onChange={(e) => setFullAddress(e.target.value)}
-            placeholder="Masukkan alamat lengkap"
-            icon={<MapPin size={18} className="sm:w-5 sm:h-5 text-gray-400" />}
-          />
+
+          {/* chunked address */}
+          <p className="font-semibold text-gray-800 pt-2">Detail Lokasi</p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <InputBox
+              label="Jalan"
+              value={addressDetails.street}
+              onChange={(e) => setAddressDetails({ ...addressDetails, street: e.target.value })}
+              placeholder="Bosih" />
+            <InputBox
+              label="No. Rumah"
+              value={addressDetails.houseNumber}
+              onChange={(e) => setAddressDetails({ ...addressDetails, houseNumber: e.target.value })}
+              placeholder="12" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <InputBox
+              label="Kelurahan"
+              value={addressDetails.kelurahan}
+              onChange={(e) => setAddressDetails({ ...addressDetails, kelurahan: e.target.value })} />
+            <InputBox
+              label="Kecamatan"
+              value={addressDetails.kecamatan}
+              onChange={(e) => setAddressDetails({ ...addressDetails, kecamatan: e.target.value })} />
+            <InputBox
+              label="Kota/Kab"
+              value={addressDetails.regency}
+              onChange={(e) => setAddressDetails({ ...addressDetails, regency: e.target.value })} />
+          </div>
+
+          {/* add location box (its guessing the location with the address from user ) */}
+          <button
+            onClick={handleSearchLocation}
+            className="flex items-center justify-center gap-2 w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-all"
+            disabled={isSearching}
+          >
+            <Search size={16} /> {isSearching ? "Mencari..." : "Cek Lokasi di Peta"}
+          </button>
+
+          {/* map preview */}
+          {tempCoords && (
+            <>
+              <div className="h-[200px] w-full rounded-xl overflow-hidden border border-gray-200 relative">
+                <MapContainer center={[tempCoords.lat, tempCoords.lng]} zoom={15} style={{ height: '100%', width: '100%' }}>
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <MapClickHandler onMapClick={(lat, lng) => {
+                    setTempCoords({ lat, lng });
+                    setFinalCoords(null); // Reset verification if user moves pin
+                  }} />
+                  <Marker
+                    position={[tempCoords.lat, tempCoords.lng]}
+                    draggable={true}
+                    eventHandlers={{
+                      dragend: (e) => {
+                        const marker = e.target;
+                        const position = marker.getLatLng();
+                        setTempCoords({ lat: position.lat, lng: position.lng });
+                        setFinalCoords(null); // Reset verification if user moves pin
+                      },
+                    }}
+                  />
+                </MapContainer>
+                <div className="absolute bottom-2 left-2 z-[1000] bg-white px-2 py-1 rounded text-[10px] shadow-md">
+                  Geser pin atau klik pada peta untuk menentukan lokasi
+                </div>
+              </div>
+              <button
+                onClick={handleSaveLocation}
+                className={`flex items-center justify-center gap-2 w-full py-2 rounded-lg font-medium text-sm transition-colors ${finalCoords
+                    ? 'bg-green-100 text-green-700 border border-green-300'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                  }`}
+              >
+                {finalCoords ? (
+                  <>
+                    <CheckCircle size={16} /> Titik Lokasi Tersimpan
+                  </>
+                ) : (
+                  "Simpan Titik Lokasi"
+                )}
+              </button>
+            </>
+          )}
+
           <InputBox
             label="Catatan untuk Kurir (Opsional)"
             value={note}

@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "../../../../lib/prisma";
 import { AuthRequest } from "../../middleware/auth.middleware";
+import { checkDeliveryRange } from "./location";
 
 // GET Fetch All Addresses
 export const getAddresses = async (req: AuthRequest, res: Response) => {
@@ -18,21 +19,22 @@ export const getAddresses = async (req: AuthRequest, res: Response) => {
 export const addAddress = async (req: AuthRequest, res: Response) => {
     try {
         const { label, fullAddress, recipientName, phoneNumber, note, isPrimary } = req.body;
+        console.log('req body: ', req.body)
 
-        // 1. Validasi Input Dasar
-        if (!recipientName || !phoneNumber || !fullAddress) {
+        // Validasi Input
+        if (!recipientName || !phoneNumber || !fullAddress ) {
             return res.status(400).json({
-                message: "Nama penerima, No Telepon, dan Alamat Lengkap harus diisi"
+                message: "Nama penerima, No Telepon, dan Alamat harus diisi"
             });
         }
-
-        // 2. Validasi Format Telepon
+        
+        // Validasi Format Telepon
         const phoneRegex = /^[\d+\-\s()]+$/;
         if (!phoneRegex.test(phoneNumber)) {
             return res.status(400).json({ message: "Nomor telepon harus berupa angka." });
         }
 
-        // 3. Logika Alamat Utama (Primary)
+        // Alamat Utama
         if (isPrimary) {
             const existingPrimaryAddress = await prisma.address.findFirst({
                 where: {
@@ -47,18 +49,21 @@ export const addAddress = async (req: AuthRequest, res: Response) => {
                 });
             }
         }
-
+        
         // 4. Create ke Database
+        const addressPayload = {
+            userId: req.user!.id,
+            recipientName,
+            phoneNumber,
+            label,
+            fullAddress,
+            note,
+            isPrimary: isPrimary || false,
+        }
+        console.log('address to db: ', addressPayload)
+
         const newAddress = await prisma.address.create({
-            data: {
-                userId: req.user!.id,
-                label,
-                fullAddress,
-                recipientName,
-                phoneNumber,
-                note,
-                isPrimary: isPrimary || false,
-            },
+            data: addressPayload,
         });
 
         return res.status(201).json(newAddress);
