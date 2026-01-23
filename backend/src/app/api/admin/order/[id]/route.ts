@@ -13,8 +13,8 @@ const isAdmin = (req: any, res: any, next: any) => {
 
 router.use(authenticate, isAdmin);
 
-router.get("/orders/:id", getAdminOrderById);
-router.patch("/orders/:id", updateOrderStatusAdmin);
+router.get("/order/:id", getAdminOrderById);
+router.patch("/order/:id", updateOrderStatusAdmin);
 
 export default router;
 
