@@ -21,7 +21,7 @@ export default function useOrderSocket(orderId: string | undefined, onUpdate: (s
     const socket = socketRef.current;
 
     socket.on("connect", () => {
-      console.log("✅ Connected to WebSocket:", socket.id);
+      // console.log("✅ Connected to WebSocket:", socket.id);
 
       // 2. Beritahu server kita ingin memantau orderId spesifik ini
       // Ini mencegah data "bocor" ke user lain
@@ -31,7 +31,7 @@ export default function useOrderSocket(orderId: string | undefined, onUpdate: (s
     socket.on("order:update", (data) => {
       // Data sekarang lebih spesifik karena dikirim lewat room
       if (data.orderId === orderId) {
-        console.log("🟢 Update Order Status:", data.status);
+        // console.log("🟢 Update Order Status:", data.status);
         onUpdate(data.status);
       }
     });
