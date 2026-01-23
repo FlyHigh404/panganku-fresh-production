@@ -91,7 +91,7 @@ const Pengguna = () => {
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (customer.phone && customer.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      customer.Address.some((addr) => 
+      customer.Address.some((addr) =>
         addr.fullAddress.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
@@ -99,8 +99,8 @@ const Pengguna = () => {
   })
 
   const handlePreviewCustomer = (customer: { id: string }) => {
-  router.push(`/admin/pengguna/detail/${customer.id}`)
-}
+    router.push(`/admin/pengguna/detail/?id=${customer.id}`)
+  }
 
   // Helper function to get primary address or first address
   const getCustomerAddress = (customer: Customer): string => {
@@ -178,7 +178,7 @@ const Pengguna = () => {
                         className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200"
                         title="View"
                       >
-                        <img src="/receipt-item.png" alt="View" className="" width="30"/>
+                        <img src="/receipt-item.png" alt="View" className="" width="30" />
                       </button>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ const Pengguna = () => {
                             className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all duration-200 cursor-pointer"
                             title="View"
                           >
-                            <img src="/receipt-item.png" alt="View" className="" width="30"/>
+                            <img src="/receipt-item.png" alt="View" className="" width="30" />
                           </button>
                         </div>
                       </td>
