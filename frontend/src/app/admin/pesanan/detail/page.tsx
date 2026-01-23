@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { ArrowLeft, Phone, MapPin, Truck, Clock, CheckCircle, X, AlertCircle, XCircle } from "lucide-react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter, useParams, useSearchParams } from "next/navigation"
 import AdminLayout from "../../AdminLayout"
 
 // TypeScript interfaces
@@ -235,9 +235,13 @@ const ConfirmationModal = ({
 
 const PesananDetailPage = () => {
   const router = useRouter()
-  const params = useParams()
+  // const params = useParams()
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+
+  // Ganti parameter khusus untuk page statis
+  const searchParams = useSearchParams()
+  const id = searchParams.get('id');
 
   // Ubah updating menjadi object untuk melacak status masing-masing button
   const [updating, setUpdating] = useState<{
@@ -319,7 +323,7 @@ const PesananDetailPage = () => {
       const token = localStorage.getItem('token');
       try {
         setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/admin/order/${params.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/admin/order/${id}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -333,11 +337,9 @@ const PesananDetailPage = () => {
         setLoading(false)
       }
     }
+    fetchOrderDetail()
 
-    if (params.id) {
-      fetchOrderDetail()
-    }
-  }, [params.id])
+  }, [id])
 
   const updateOrderStatus = async (newStatus: string, actionType: 'tugaskanKurir' | 'selesaikanPesanan' | 'batalkanPesanan') => {
     const token = localStorage.getItem('token');
@@ -345,7 +347,7 @@ const PesananDetailPage = () => {
       // Set loading state untuk button yang spesifik
       setUpdating(prev => ({ ...prev, [actionType]: true }))
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/admin/order/${params.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/admin/order/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

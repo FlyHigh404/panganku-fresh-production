@@ -97,7 +97,7 @@ export default function Pesanan() {
   )
 
   const handlePreviewOrder = (order: any) => {
-    router.push(`/admin/pesanan/detail/${order.id}`)
+    router.push(`/admin/pesanan/detail/?id=${order.id}`)
   }
 
   if (loading) {
