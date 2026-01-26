@@ -102,15 +102,14 @@ export default function ProfilForm() {
         birthdate: formData.birthdate,
         gender: formData.gender,
       };
-      
-      // Only include image if it has a value
+
       if (formData.profileImage && formData.profileImage.trim() !== "") {
         payload.image = formData.profileImage;
       }
-      
+
       // console.log("Saving profile with image:", formData.profileImage);
       // console.log("Full payload:", payload);
-      
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
@@ -162,7 +161,7 @@ export default function ProfilForm() {
           canvas.width = width
           canvas.height = height
           ctx.drawImage(img, 0, 0, width, height)
-          
+
           //compress the data
           canvas.toBlob(
             (blob) => {
@@ -239,19 +238,24 @@ export default function ProfilForm() {
           "Authorization": `Bearer ${token}`
         }
       })
-      
+
       console.log("🔵 Frontend - Upload response status:", res.status);
       console.log("🔵 Frontend - Upload response ok:", res.ok);
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || "Upload gagal")
-      }
 
       const data = await res.json()
+      if (res.ok && data.url) {
+        setPreviewImage(data.url);
+        setFormData((prev) => ({ ...prev, profileImage: data.url }));
+        setUploadSuccess(true);
+        // console.log("Upload berhasil, URL Supabase:", data.url);
+      } else {
+        throw new Error(data.error || "Gagal upload");
+      }
+
       const uploadedUrl = data.url || ""
-      
+
       setFormData(prev => ({ ...prev, profileImage: uploadedUrl }))
-      
+
       setUploadSuccess(true)
       setTimeout(() => setUploadSuccess(false), 3000)
     } catch (err) {
@@ -340,11 +344,11 @@ export default function ProfilForm() {
               // Use regular img tag for uploaded images to avoid Next.js Image issues
               <img
                 src={
-                  formData.profileImage.startsWith('http') 
-                    ? formData.profileImage 
+                  formData.profileImage.startsWith('http')
+                    ? formData.profileImage
                     : formData.profileImage.startsWith('/')
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${formData.profileImage}`
-                    : `${process.env.NEXT_PUBLIC_API_URL}/${formData.profileImage}`
+                      ? `${process.env.NEXT_PUBLIC_API_URL}${formData.profileImage}`
+                      : `${process.env.NEXT_PUBLIC_API_URL}/${formData.profileImage}`
                 }
                 alt="Foto Profil"
                 className="object-cover w-full h-full"
@@ -367,6 +371,7 @@ export default function ProfilForm() {
                 width={200}
                 height={164}
                 className="object-cover w-full h-full"
+                unoptimized
               />
             )}
           </div>
@@ -382,8 +387,8 @@ export default function ProfilForm() {
           <label
             htmlFor="upload"
             className={`mt-3 flex justify-center items-center gap-2 w-[150px] md:w-[201px] h-[40px] rounded-lg font-medium text-sm md:text-base transition-colors duration-200 ${uploadLoading
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : "bg-[#E6FCF6] text-[#26A81D] hover:bg-green-200 cursor-pointer"
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-[#E6FCF6] text-[#26A81D] hover:bg-green-200 cursor-pointer"
               }`}
           >
             {uploadLoading ? (
@@ -426,8 +431,8 @@ export default function ProfilForm() {
               value={formData.name}
               onChange={handleChange}
               className={`w-full border rounded-lg p-3 pt-6 focus:outline-none text-sm md:text-base transition-colors duration-200 ${fieldErrors.name
-                  ? "border-red-500 focus:border-red-600"
-                  : "border-gray-300 focus:border-green-600"
+                ? "border-red-500 focus:border-red-600"
+                : "border-gray-300 focus:border-green-600"
                 }`}
               placeholder="Masukkan nama lengkap"
             />
@@ -447,8 +452,8 @@ export default function ProfilForm() {
               value={formData.phone}
               onChange={handleChange}
               className={`w-full border rounded-lg p-3 pt-6 focus:outline-none text-sm md:text-base transition-colors duration-200 ${fieldErrors.phone
-                  ? "border-red-500 focus:border-red-600"
-                  : "border-gray-300 focus:border-green-600"
+                ? "border-red-500 focus:border-red-600"
+                : "border-gray-300 focus:border-green-600"
                 }`}
               placeholder="08xxxxxxxxxx"
             />
@@ -463,8 +468,8 @@ export default function ProfilForm() {
         onClick={handleSave}
         disabled={saveLoading || uploadLoading}
         className={`mt-4 md:mt-6 w-full font-bold py-3 px-6 md:px-12 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm md:text-base transition-all duration-200 flex items-center justify-center gap-2 ${saveLoading || uploadLoading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#26A81D] text-white hover:bg-green-700"
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-[#26A81D] text-white hover:bg-green-700"
           }`}
       >
         {saveLoading ? (
