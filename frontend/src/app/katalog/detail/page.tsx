@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import {
   ArrowLeft,
@@ -233,6 +233,8 @@ const ProductDetailPage = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { incrementCart } = useCart();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
 
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -258,7 +260,7 @@ const ProductDetailPage = () => {
       setLoading(true);
       setError(null);
 
-      const productId = params.id as string;
+      const productId = id as string;
       if (!productId) {
         setError("Product ID tidak ditemukan");
         return;
@@ -373,10 +375,10 @@ const ProductDetailPage = () => {
   };
 
   useEffect(() => {
-    if (params?.id) {
+    if (id) {
       fetchData();
     }
-  }, [params?.id]);
+  }, [id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -590,7 +592,7 @@ const ProductDetailPage = () => {
   }
 
   return (
-    <>
+    <Suspense>
       <NavSearch />
       {toast && (
         <Toast
@@ -967,7 +969,7 @@ const ProductDetailPage = () => {
           animation: slide-in 0.3s ease-out;
         }
       `}</style>
-    </>
+    </Suspense>
   );
 };
 
