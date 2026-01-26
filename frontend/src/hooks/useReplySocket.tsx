@@ -7,28 +7,22 @@ export default function useReplySocket(userId: string | undefined, onNotificatio
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    // Jangan jalankan jika userId tidak ada
     if (!userId) return;
 
-    // 1. Arahkan ke URL backend di Render (NEXT_PUBLIC_API_URL)
     const socketUrl = process.env.NEXT_PUBLIC_API_URL || "https://panganku-fresh-production.onrender.com";
 
     socketRef.current = io(socketUrl, {
-      transports: ["websocket"], // Lebih stabil untuk hosting seperti Hostinger/Render
+      transports: ["websocket"],
       reconnection: true,
     });
 
     const socket = socketRef.current;
 
     socket.on("connect", () => {
-      console.log("✅ Reply Socket Connected:", socket.id);
-
-      // 2. Gunakan event join untuk masuk ke room spesifik User
-      // Agar notifikasi reply hanya diterima oleh user yang bersangkutan
+      console.log("✅ Reply Socket Connected");
       socket.emit("join-user-room", userId);
     });
 
-    // 3. Gunakan socket.on (bukan variabel global)
     socket.on("notification:new", (notif) => {
       console.log("🔔 New Reply Notification:", notif);
       onNotification(notif.message);
@@ -38,7 +32,6 @@ export default function useReplySocket(userId: string | undefined, onNotificatio
       console.error("❌ Reply Socket Error:", err.message);
     });
 
-    // Cleanup: Membersihkan event listener dan koneksi saat komponen unmount
     return () => {
       if (socket) {
         socket.off("notification:new");
