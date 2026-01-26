@@ -161,7 +161,7 @@ const OrderConfirm: React.FC<OrderConfirmProps> = ({
   const handleBeliLagi = () => {
     if (products.length > 0) {
       const firstProductId = products[0].id;
-      router.push(`/katalog/${firstProductId}`);
+      router.push(`/katalog/detail?id=${firstProductId}`);
     }
   };
 

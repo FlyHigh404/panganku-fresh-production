@@ -790,7 +790,7 @@ const ProductDetailPage = () => {
                   {RelatedProducts.map((relatedProduct) => (
                     <a
                       key={relatedProduct.id}
-                      href={`/katalog/${relatedProduct.id}`}
+                      href={`/katalog/detail?id=${relatedProduct.id}`}
                       className="group block bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
                     >
                       <div className="aspect-square bg-gray-50 relative">
