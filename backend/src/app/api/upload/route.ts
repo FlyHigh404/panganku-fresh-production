@@ -1,46 +1,70 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
-import { nanoid } from "nanoid";
 import { uploadFileResponse } from "./upload";
 import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
+const storage = multer.memoryStorage();
 
-const uploadDir = path.join(process.cwd(), "public/uploads");
-
-// Konfigurasi Penyimpanan Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Pastikan folder ini sudah ada
-  },
-  filename: (req, file, cb) => {
-    const fileExtension = path.extname(file.originalname);
-    const fileNameWithoutExt = path.parse(file.originalname).name;
-    const uniqueFilename = `${fileNameWithoutExt}-${nanoid(8)}${fileExtension}`;
-    cb(null, uniqueFilename);
-  },
-});
-
-// Konfigurasi Filter & Limit
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Maksimal 5MB
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "application/pdf"];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("Tipe file tidak didukung. Hanya JPG, PNG, dan PDF yang diizinkan."));
+      cb(new Error("Hanya file gambar (JPG/PNG) yang diizinkan!") as any);
     }
   },
 });
 
-// Route: /app/api/upload
-// 'file' adalah nama field yang dikirim dari FormData frontend
 router.post("/", authenticate, upload.single("file"), uploadFileResponse);
 
 export default router;
+
+// import { Router } from "express";
+// import multer from "multer";
+// import path from "path";
+// import { nanoid } from "nanoid";
+// import { uploadFileResponse } from "./upload";
+// import { authenticate } from "../middleware/auth.middleware";
+
+// const router = Router();
+
+// const uploadDir = path.join(process.cwd(), "public/uploads");
+
+// // Konfigurasi Penyimpanan Multer
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, uploadDir); // Pastikan folder ini sudah ada
+//   },
+//   filename: (req, file, cb) => {
+//     const fileExtension = path.extname(file.originalname);
+//     const fileNameWithoutExt = path.parse(file.originalname).name;
+//     const uniqueFilename = `${fileNameWithoutExt}-${nanoid(8)}${fileExtension}`;
+//     cb(null, uniqueFilename);
+//   },
+// });
+
+// // Konfigurasi Filter & Limit
+// const upload = multer({
+//   storage: storage,
+//   limits: { fileSize: 5 * 1024 * 1024 }, // Maksimal 5MB
+//   fileFilter: (req, file, cb) => {
+//     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "application/pdf"];
+//     if (allowedTypes.includes(file.mimetype)) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error("Tipe file tidak didukung. Hanya JPG, PNG, dan PDF yang diizinkan."));
+//     }
+//   },
+// });
+
+// // 'file' adalah nama field yang dikirim dari FormData frontend
+// router.post("/", authenticate, upload.single("file"), uploadFileResponse);
+
+// export default router;
 
 // import { NextResponse } from "next/server";
 // import { writeFile, mkdir } from "fs/promises";
