@@ -3,6 +3,10 @@ import { prisma } from "../../../lib/prisma";
 
 export const getNotifications = async (req: any, res: Response) => {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: "Unauthorized: User ID missing" });
+    }    
+
     const notifications = await prisma.notification.findMany({
       where: { userId: req.user.id },
       orderBy: { createdAt: 'desc' },

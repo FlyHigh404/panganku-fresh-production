@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getNotifications, deleteAllNotifications } from "./notifications";
-import { signIn } from "../auth/[...nextauth]/signin";
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -12,8 +12,8 @@ const isCustomer = (req: any, res: any, next: any) => {
     next();
 };
 
-router.get("/", signIn, isCustomer, getNotifications);
-router.delete("/", signIn, isCustomer, deleteAllNotifications);
+router.get("/", authenticate, isCustomer, getNotifications);
+router.delete("/", authenticate, isCustomer, deleteAllNotifications);
 
 export default router;
 
