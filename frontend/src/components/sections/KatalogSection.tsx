@@ -108,10 +108,10 @@ export default function KatalogSection() {
           (product) => product.category?.name?.toLowerCase() === "buah segar"
         );
 
-        // Debug log (tetap dipertahankan)
-        console.log("All Products:", allProducts);
-        console.log("Sayuran Products:", sayuranSegarProducts);
-        console.log("Available categories:", [...new Set(allProducts.map((p) => p.category?.name))]);
+        // Debug log
+        // console.log("All Products:", allProducts);
+        // console.log("Sayuran Products:", sayuranSegarProducts);
+        // console.log("Available categories:", [...new Set(allProducts.map((p) => p.category?.name))]);
 
         setSayuranProducts(sayuranSegarProducts);
         setBuahProducts(buahSegarProducts);
