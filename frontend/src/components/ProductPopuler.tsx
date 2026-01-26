@@ -183,7 +183,7 @@ export default function ProductPopuler() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {products.map((product, index) => (
-            <Link href={`/katalog/${product.id}`} passHref key={product.id}>
+            <Link href={`/katalog/detail?id=${product.id}`} passHref key={product.id}>
               <div
                 className="cursor-pointer bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl p-1.5 sm:p-3 lg:p-2 shadow-sm sm:shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-card-appear"
                 style={{ animationDelay: `${900 + index * 200}ms` }}
