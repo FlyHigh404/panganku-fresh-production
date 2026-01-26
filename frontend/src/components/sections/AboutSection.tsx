@@ -32,9 +32,8 @@ export default function AboutSection() {
       }}
     >
       <div
-        className={`max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-10 transition-all duration-700 ${
-          isVisible ? "animate-fade-in-up" : "opacity-0"
-        }`}
+        className={`max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-10 transition-all duration-700 ${isVisible ? "animate-fade-in-up" : "opacity-0"
+          }`}
       >
         {/* Logo */}
         <div className="flex-shrink-0">
@@ -43,9 +42,8 @@ export default function AboutSection() {
             alt="Panganku Fresh Logo"
             width={200}
             height={200}
-            className={`object-contain w-32 h-32 md:w-[200px] md:h-[200px] ${
-              isVisible ? "animate-float-left" : ""
-            }`}
+            className={`object-contain w-32 h-32 md:w-[200px] md:h-[200px] ${isVisible ? "animate-float-left" : ""
+              }`}
           />
         </div>
 
@@ -66,12 +64,9 @@ export default function AboutSection() {
             style={{
               color: "rgba(20, 20, 20, 0.7)",
               textShadow: "0 1px 4px rgba(0, 0, 0, 0.10)",
-            }}
+            }}
           >
-            Panganku Fresh adalah oasis bagi mereka yang mencari kesegaran dan kualitas dalam setiap gigitan. Dengan
-            sayuran segar dan sembako pilihan, kami menghidupkan rumah Anda dengan cinta dan dedikasi. Setiap produk
-            adalah bukti komitmen kami untuk menghadirkan yang terbaik, menjadikan Panganku Fresh sebagai bagian tak
-            terpisahkan dari kehidupan sehari-hari Anda.
+            Panganku Fresh hadir oleh para pendiri memiliki visi sama untuk menyediakan sayur/sembako berkualitas dengan harga terjangkau. Kami memulai usaha ini dengan menggabungkan penjualan online dan offline untuk memberikan kemudahan bagi pelanggan. Dengan kerja keras dan dedikasi, Panganku Fresh terus berkembang dan mendapatkan kepercayaan dari pelanggan. Kami berkomitmen untuk selalu memberikan produk terbaik dan pelayanan ramah kepada masyarakat.
           </p>
         </div>
       </div>
