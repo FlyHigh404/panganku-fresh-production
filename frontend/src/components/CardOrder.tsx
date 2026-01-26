@@ -215,7 +215,7 @@ const CardOrder: React.FC<CardOrderProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                router.push(`/katalog/${products[0]?.id}`);
+                router.push(`/katalog/detail?id=${products[0]?.id}`);
               }}
               className="rounded-[10px] sm:rounded-[13px] bg-green-600 text-white px-3 sm:px-4 py-1 text-[11px] sm:text-[12px] font-semibold hover:bg-green-700 transition-all"
             >
@@ -294,7 +294,7 @@ const CardOrder: React.FC<CardOrderProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(`/katalog/${product.id}`);
+                        router.push(`/katalog/detail?id=${product.id}`);
                       }}
                       className="rounded-lg bg-green-600 text-white px-3 py-1 text-[11px] sm:text-[12px] font-semibold hover:bg-green-700 transition-all"
                     >
