@@ -225,7 +225,7 @@ const CartProduct: React.FC<CartProductProps> = ({ product, index }) => {
         </div>
       )}
 
-      <Link href={`/katalog/${product.id}`} passHref>
+      <Link href={`/katalog/detail?id=${product.id}`} passHref>
         <div
           key={product.id}
           className="cursor-pointer bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl p-1.5 sm:p-3 lg:p-2 shadow-sm sm:shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-card-appear"
