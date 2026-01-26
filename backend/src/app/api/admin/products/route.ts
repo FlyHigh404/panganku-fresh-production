@@ -14,7 +14,7 @@ const isAdmin = (req: any, res: any, next: any) => {
 router.use(authenticate, isAdmin);
 
 router.get("/products", getAdminProducts);
-router.get("/products", createProduct);
+router.post("/products", createProduct);
 
 export default router;
 
