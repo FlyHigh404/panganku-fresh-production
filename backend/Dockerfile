@@ -1,7 +1,7 @@
 # Versi Node terbaru
 FROM node:22-alpine
 
-RUN apk add --no-node-cache libc6-compat
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
