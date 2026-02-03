@@ -14,6 +14,8 @@ RUN npm install
 # Copas semua src
 COPY . .
 
+RUN npm run build
+
 RUN npm run start
 
 ENV PORT=8000
