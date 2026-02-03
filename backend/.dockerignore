@@ -22,3 +22,5 @@ Dockerfile
 # Misc
 .DS_Store
 README.md
+
+../frontend
