@@ -16,8 +16,6 @@ COPY . .
 
 RUN npm run build
 
-RUN npm run start
-
 ENV PORT=8000
 EXPOSE 8000
 
