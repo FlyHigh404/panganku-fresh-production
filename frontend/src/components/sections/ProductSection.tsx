@@ -389,7 +389,7 @@ export default function ProductPopuler() {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center lg:justify-start lg:ml-42 gap-2 sm:gap-2.5 lg:gap-2 mb-4 animate-fade-in-up animation-delay-500">
+      <div className="flex flex-wrap justify-center lg:justify-start lg:ml-32 gap-2 sm:gap-2.5 lg:gap-2 mb-4 animate-fade-in-up animation-delay-500">
         <button
           onClick={() => setActiveCategory(null)}
           className={`px-3.5 sm:px-5 lg:px-4 py-1.5 sm:py-2.5 lg:py-2 rounded-full font-medium text-sm sm:text-sm lg:text-[0.8rem] transition-all duration-300 ${activeCategory === null
