@@ -137,7 +137,7 @@ const Navbar = () => {
             <img
               src="/Logo.png"
               alt="Panganku Fresh Logo"
-              className="w-32 h-10 sm:w-40 sm:h-12 md:w-48 md:h-14 object-contain"
+              className="w-22 h-12 sm:w-36 sm:h-16 md:w-42 md:h-20 object-contain"
             />
           </div>
         </a>
@@ -150,7 +150,7 @@ const Navbar = () => {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className={`relative transition-all duration-300 font-medium text-sm group ${isActive
+                  className={`relative transition-all duration-300 font-medium text-base group ${isActive
                     ? "text-green-600"
                     : "text-gray-700 hover:text-green-600"
                     }`}
@@ -291,13 +291,26 @@ const Navbar = () => {
         </div>
 
         {/* ---------------- MOBILE BUTTON ---------------- */}
-        <button
-          className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          <Menu className="w-6 h-6 text-gray-700" />
-        </button>
+        <div className="flex items-center gap-2 ml-auto lg:hidden">
+
+          {/* Ikon Notifikasi dan Cart */}
+          {showCustomerIcons && (
+            <div className="flex items-center gap-1">
+              <NotifikasiCust notificationCount={notificationCount} />
+              <CartCust />
+            </div>
+          )}
+
+          {/* Button Hamburger Menu */}
+          <button
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="w-6 h-6 text-gray-700" />
+          </button>
+
+        </div>
       </nav>
 
       {/* ---------------- MOBILE MENU ---------------- */}
@@ -408,7 +421,7 @@ const Navbar = () => {
                 </button>
               )}
 
-              {showCustomerIcons && (
+              {/* {showCustomerIcons && (
                 <>
                   <button
                     onClick={() => {
@@ -431,9 +444,10 @@ const Navbar = () => {
                       isMobile={true}
                       onClose={() => setIsMobileMenuOpen(false)}
                     />
+                    Notifikasi
                   </div>
                 </>
-              )}
+              )} */}
 
               <button
                 onClick={handleSignOut}
