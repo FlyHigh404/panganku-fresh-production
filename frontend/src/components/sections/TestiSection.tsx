@@ -3,18 +3,24 @@
 import { useEffect, useRef, useState } from "react"
 import CardTesti from "@/components/CardTesti"
 
-  const testimonials = [
-  { name: "Chaidar Abdillah", role: "Mahasiswa", testimonial: "Belanja di Panganku Fresh selalu memuaskan. Sayur segar, harga bersahabat, pelayanan cepat dan ramah!", avatar: "/Chaidar.jpg" },
-  { name: "Setia Cahya", role: "Mahasiswa", testimonial: "Awalnya ragu belanja online, tapi Panganku Fresh bikin nyaman. Barang cepat datang dan selalu segar!", avatar: "/Setia.jpg" },
-  { name: "Sharon Virginia", role: "Mahasiswa", testimonial: "Panganku Fresh jadi penyelamat saya yang sibuk! Semua sayur dan sembako fresh, tinggal pesan, langsung diantar", avatar: "/Sharon.jpg" },
-  { name: "Abednego Sinaga", role: "Karyawan", testimonial: "Kualitas sayurannya selalu bagus dan segar. Harganya juga pas di kantong. Mantap banget Panganku Fresh", avatar: "/Abednego.jpg" },
-  { name: "Steven Silitonga", role: "Karyawan", testimonial: "Coba sekali langsung ketagihan! Sayurannya fresh, pengiriman cepat, dan pelayanan top!", avatar: "/Steven.jpg" },
-  { name: "Ahmad Saddam", role: "Karyawan", testimonial: "Produk selalu segar, kurir sopan, dan pengiriman tepat waktu. Panganku Fresh memang terbaik!", avatar: "/Ahmad.jpg" },
+const testimonials = [
+  { name: "Chaidar Abdillah", role: "Mahasiswa", testimonial: "Belanja di Panganku Fresh selalu memuaskan...", avatar: "/Chaidar.jpg" },
+  { name: "Setia Cahya", role: "Mahasiswa", testimonial: "Awalnya ragu belanja online...", avatar: "/Setia.jpg" },
+  { name: "Sharon Virginia", role: "Mahasiswa", testimonial: "Panganku Fresh jadi penyelamat saya...", avatar: "/Sharon.jpg" },
+  { name: "Abednego Sinaga", role: "Karyawan", testimonial: "Kualitas sayurannya selalu bagus...", avatar: "/Abednego.jpg" },
+  { name: "Steven Silitonga", role: "Karyawan", testimonial: "Coba sekali langsung ketagihan!...", avatar: "/Steven.jpg" },
+  { name: "Ahmad Saddam", role: "Karyawan", testimonial: "Produk selalu segar, kurir sopan...", avatar: "/Ahmad.jpg" },
 ]
 
 export default function TestiSection() {
   const sectionRef = useRef<HTMLElement | null>(null)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
   const [isVisible, setIsVisible] = useState(false)
+
+  // logika drag manual state
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -31,6 +37,25 @@ export default function TestiSection() {
     return () => observer.disconnect()
   }, [])
 
+  // Logika Drag to Scroll
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return
+    setIsDragging(true)
+    setStartX(e.pageX - scrollRef.current.offsetLeft)
+    setScrollLeft(scrollRef.current.scrollLeft)
+  }
+
+  const handleMouseUp = () => setIsDragging(false)
+  const handleMouseLeave = () => setIsDragging(false)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return
+    e.preventDefault()
+    const x = e.pageX - scrollRef.current.offsetLeft
+    const walk = (x - startX) * 2 // Kecepatan scroll manual
+    scrollRef.current.scrollLeft = scrollLeft - walk
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -45,7 +70,6 @@ export default function TestiSection() {
       }}
     >
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Heading */}
         <div className="text-center mb-10 sm:mb-12">
           <h3 className="text-green-600 font-semibold text-base sm:text-lg mb-2">
             Testimoni
@@ -54,14 +78,20 @@ export default function TestiSection() {
             Apa Yang Pengguna Katakan Tentang Kami
           </h2>
         </div>
-
-        {/* Baris pertama (kiri → kanan) */}
-        <div className="mb-4 sm:mb-6">
-          <div className="marquee-left flex gap-3 sm:gap-4">
+        <div
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onMouseMove={handleMouseMove}
+          className={`mb-4 sm:mb-6 overflow-x-auto scroll-smooth scrollbar-hide active:cursor-grabbing ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          <div className="marquee-left flex gap-3 sm:gap-4 w-max">
             {[...testimonials, ...testimonials].map((t, i) => (
               <div
                 key={`row1-${i}`}
-                className="flex-shrink-0 transition-transform duration-500 hover:scale-105"
+                className="flex-shrink-0 transition-transform duration-500 hover:scale-105 select-none"
               >
                 <CardTesti {...t} />
               </div>
