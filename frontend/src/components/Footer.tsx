@@ -59,14 +59,14 @@ const Footer = () => {
             {/* Description */}
             <div className="text-gray-500 font-book text-sm space-y-2 max-w-lg">
               <p className="leading-relaxed">
-                Menyediakan kebutuhan sehari-hari seperti sembako, sayur, dan
+                Menyediakan kebutuhan sehari-hari seperti sembako, sayur, dan perlengkapan rumah tangga, dengan layanan cepat, pembayaran mudah, dan pengiriman langsung ke rumah Anda.
               </p>
-              <p className="leading-relaxed">
+              {/* <p className="leading-relaxed">
                 perlengkapan rumah tangga, dengan layanan cepat,
               </p>
               <p className="leading-relaxed">
                 pembayaran mudah, dan pengiriman langsung ke rumah Anda.
-              </p>
+              </p> */}
             </div>
           </div>
 
@@ -125,7 +125,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="text-center sm:text-left">
             <p className="text-xs sm:text-sm text-gray-500 font-book">
-              Copyright © 2025 Genesis Team Design.
+              Copyright © 2025 FlyHigh Sinergi Indonesia.
             </p>
           </div>
 
