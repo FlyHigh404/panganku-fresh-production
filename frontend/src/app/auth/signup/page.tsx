@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-// 1. Ganti import next-auth dengan AuthContext dan Google OAuth
 import { useAuth } from '@/context/AuthContext'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import NavAuth from '@/components/NavAuth'
@@ -13,7 +12,8 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    verificationToken: ''
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -62,24 +62,27 @@ export default function Register() {
         throw new Error(data.error || 'Terjadi kesalahan')
       }
 
+      alert("Pendaftaran berhasil! Silakan cek inbox/spam email Anda untuk verifikasi akun.");
+      router.push('/auth/signin');
+
       // 3. Login otomatis setelah signup berhasil menggunakan AuthContext
-      const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/auth/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
-      });
+      // const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/auth/signin`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     email: formData.email,
+      //     password: formData.password
+      //   })
+      // });
 
-      const loginData = await loginRes.json();
+      // const loginData = await loginRes.json();
 
-      if (loginRes.ok) {
-        login(loginData.user, loginData.token); // Simpan session
-        router.push('/');
-      } else {
-        router.push('/auth/signin');
-      }
+      // if (loginRes.ok) {
+      //   login(loginData.user, loginData.token); // Simpan session
+      //   router.push('/');
+      // } else {
+      //   router.push('/auth/signin');
+      // }
 
     } catch (error: any) {
       setError(error.message)
@@ -134,8 +137,8 @@ export default function Register() {
           <img src="/loginRight.png" alt="Fruits decoration" className="object-cover" style={{ width: '800px' }} />
         </div>
 
-        <div className="relative z-5 flex items-center justify-center w-full h-full">
-          <div className="bg-white rounded-xl shadow-lg p-10 border border-gray-100" style={{ width: '500px', minHeight: 'auto' }}>
+        <div className="relative z-10 flex items-center justify-center w-full h-full min-h-screen p-4">
+          <div className="w-full max-w-[500px] bg-white rounded-xl shadow-lg p-6 sm:p-10 border border-gray-100">
             <div className="flex flex-col justify-center h-full space-y-6">
               <div className="text-center">
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">Daftar ke Panganku Fresh</h1>
@@ -149,7 +152,6 @@ export default function Register() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Input Fields (Name, Email, Password, Confirm) - Tetap Sama */}
                 <div className="relative">
                   <input type="text" name="name" value={formData.name} onChange={handleChange} required className="peer w-full px-4 pt-6 pb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-gray-900" placeholder="" />
                   <label className="absolute left-4 top-2 text-xs text-gray-500 transition-all">Nama Lengkap</label>
@@ -157,7 +159,7 @@ export default function Register() {
 
                 <div className="relative">
                   <input type="email" name="email" value={formData.email} onChange={handleChange} required className="peer w-full px-4 pt-6 pb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-gray-900" placeholder="" />
-                  <label className="absolute left-4 top-2 text-xs text-gray-500 transition-all">Email atau Nomor HP</label>
+                  <label className="absolute left-4 top-2 text-xs text-gray-500 transition-all">Email</label>
                 </div>
 
                 <div className="relative">
