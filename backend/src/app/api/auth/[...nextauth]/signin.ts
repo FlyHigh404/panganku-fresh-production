@@ -38,12 +38,14 @@ export const signIn = async (req: Request, res: Response) => {
             },
         });
 
-        // 3. Verifikasi User (Sesuai logika authorize di auth.ts)
         if (!user || !user.password) {
             return res.status(401).json({ error: "User tidak ditemukan" });
         }
 
-        // 4. Bandingkan password menggunakan bcrypt
+        if (!user.emailVerified) {
+            return res.status(403).json({ error: "Email Anda belum diverifikasi. Silakan cek inbox email Anda." });
+        }
+
         const isCorrectPassword = await bcrypt.compare(
             password,
             user.password
@@ -53,7 +55,7 @@ export const signIn = async (req: Request, res: Response) => {
             return res.status(401).json({ error: "Password salah" });
         }
 
-        // 5. Buat Token JWT Asli
+        // token JWT
         const token = jwt.sign(
             {
                 id: user.id,
