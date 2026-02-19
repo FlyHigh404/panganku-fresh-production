@@ -10,12 +10,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    // console.log("Ini token usernya: ", token)
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
-        // Mengambil data dari localStorage saat halaman pertama kali dibuka
         const storedUser = localStorage.getItem('user');
         const storedToken = localStorage.getItem('token');
 
