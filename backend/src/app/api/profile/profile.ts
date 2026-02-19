@@ -33,8 +33,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
     const { name, phone, address = "", image = "" } = req.body;
 
-    if (!name || !phone) {
-      return res.status(400).json({ error: "Name and phone are required" });
+    if (!name) {
+      return res.status(400).json({ error: "Name are required" });
     }
 
     const updatedProfile = await prisma.user.update({
