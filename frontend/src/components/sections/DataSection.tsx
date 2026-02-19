@@ -39,7 +39,7 @@ const DataSection: React.FC = () => {
     <section
       ref={sectionRef}
       className={`bg-cover bg-center py-12 transition-all duration-700 ease-out
-        ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20"}`}
+        ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"}`}
       style={{ backgroundImage: "url('/bgdata_beranda.png')" }}
     >
       <div className="container mx-auto px-4">
