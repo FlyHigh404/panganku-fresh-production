@@ -23,10 +23,10 @@ export default function ProfilForm() {
   const [isFirstEdit, setIsFirstEdit] = useState(false)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const router = useRouter()
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const token = localStorage.getItem('token');
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/app/api/profile`, {
           headers: {
@@ -43,8 +43,7 @@ export default function ProfilForm() {
           gender: data.gender || "",
           profileImage: data.profileImage || data.image || data.picture || "",
         })
-
-        // cek apakah profil ini pertama kali diisi (tidak ada foto dan nomor hp)
+        
         if (!data.phone || !data.image) {
           setIsFirstEdit(true)
         }
@@ -94,6 +93,8 @@ export default function ProfilForm() {
     setSaveLoading(true)
     setError(null)
     setSuccess(false)
+
+    const token = localStorage.getItem('token');
 
     try {
       const payload: any = {
