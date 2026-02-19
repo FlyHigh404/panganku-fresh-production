@@ -23,6 +23,7 @@ import adminReplyReview from "./app/api/admin/reply-review/route";
 
 // auth routes
 import signUpRoutes from "./app/api/auth/signup/route";
+import verifyRoutes from "./app/api/auth/verify/route";
 import signInRoutes from "./app/api/auth/[...nextauth]/route";
 import googleRoutes from "./app/api/auth/google/route";
 
@@ -81,6 +82,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  next();
+});
+
 const httpServer = createServer(app);
 
 // Konfigurasi Socket.io
@@ -114,6 +121,7 @@ app.use('/app/api/admin', adminReplyReview);
 
 // Signup
 app.use('/app/api/auth/signup', signUpRoutes);
+app.use('/app/api/auth/verify-email', verifyRoutes);
 app.use('/app/api/auth/signin', signInRoutes);
 app.use('/app/api/auth/google', googleRoutes);
 
@@ -157,7 +165,7 @@ app.use('/app/api/shipping', shippingRoutes);
 // Inisialisasi API Routes untuk Internal Trigger
 app.use("/notify", createNotifyRouter(io));
 
-// Health Check untuk Monitoring Render
+// Health Check untuk Monitoring
 app.get("/health", (req, res) => res.send("Realtime Server is Healthy"));
 
 app.get("/", (req, res) => {
