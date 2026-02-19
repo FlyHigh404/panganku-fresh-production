@@ -1,11 +1,9 @@
 import { Router } from "express";
 import { googleLogin } from "./googleAuth";
-// import { login, register } from "../controllers/auth/authController"; // Jika Anda punya login manual
+// import { login, register } from "../controllers/auth/authController";
 
 const router = Router();
-
-// Endpoint: /app/api/auth/google
-router.post("/google", googleLogin);
+router.post("/", googleLogin);
 
 export default router;
 
