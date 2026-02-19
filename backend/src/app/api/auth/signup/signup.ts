@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../../../../lib/prisma';
+import crypto from 'crypto';
+import { sendVerificationEmail } from '../../../../lib/mail';
 
 // const JWT_SECRET = process.env.NEXTAUTH_SECRET as string;
 
@@ -18,10 +20,22 @@ export const signUp = async (req: Request, res: Response) => {
                 name,
                 email,
                 password: hashedPassword,
-                emailVerified: new Date(),
                 image: '/polar-bear.png'
             }
         });
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const expires = new Date(Date.now() + 360000);
+
+        await prisma.verificationToken.create({
+            data: {
+                identifier: email,
+                expires: expires,
+                token: token,
+            }
+        });
+
+        await sendVerificationEmail(email, token);
 
         return res.status(201).json({ message: 'User created successfully', user: { id: user.id, email: user.email } });
     } catch (error) {
