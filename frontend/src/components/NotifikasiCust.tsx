@@ -187,7 +187,6 @@ const NotifikasiCust: React.FC<NotifikasiCustProps> = ({
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                     <Bell className="w-5 h-5 text-gray-400" />
-                    <span>Notifikasi</span>
                     {actualNotificationCount > 0 && (
                         <span className="ml-auto bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full min-w-[20px] text-center">
                             {badgeContent}
