@@ -35,7 +35,7 @@ const ReasonSection: React.FC = () => {
                 }`}
                 style={{ animationDelay: `${200 * (idx + 1)}ms` }}
               >
-                <h3 className="text-green-600 font-medium text-[8px] md:text-lg flex items-center justify-start gap-2">
+                <h3 className="text-green-600 font-medium text-[14px] md:text-lg flex items-center justify-start gap-2">
                   <img
                     src={item.icon}
                     alt={item.title}
@@ -43,7 +43,7 @@ const ReasonSection: React.FC = () => {
                   />
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-[6px] md:text-sm mt-1">{item.desc}</p>
+                <p className="text-gray-600 text-[12px] md:text-sm mt-1">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -76,7 +76,7 @@ const ReasonSection: React.FC = () => {
                 }`}
                 style={{ animationDelay: `${200 * (idx + 1)}ms` }}
               >
-                <h3 className="text-green-600 font-medium text-[8px] md:text-lg flex items-center justify-end gap-2">
+                <h3 className="text-green-600 font-medium text-[14px] md:text-lg flex items-center justify-end gap-2">
                   {item.title}
                   <img
                     src={item.icon}
@@ -84,7 +84,7 @@ const ReasonSection: React.FC = () => {
                     className="w-5 h-5 md:w-7 md:h-7 object-contain"
                   />
                 </h3>
-                <p className="text-gray-600 text-[6px] md:text-sm mt-1">{item.desc}</p>
+                <p className="text-gray-600 text-[12px] md:text-sm mt-1">{item.desc}</p>
               </div>
             ))}
           </div>
