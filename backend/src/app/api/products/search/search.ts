@@ -7,33 +7,37 @@ export const searchProducts = async (req: Request, res: Response) => {
     const q = (req.query.q as string) || "";
     const categoryId = (req.query.categoryId as string) || "";
     const page = parseInt((req.query.page as string) || "1");
-    const limit = parseInt((req.query.limit as string) || "10");
+    const limit = parseInt((req.query.limit as string) || "50");
     const minPrice = req.query.minPrice as string;
     const maxPrice = req.query.maxPrice as string;
     const minRating = req.query.minRating as string;
 
     const skip = (page - 1) * limit;
-
-    // Build filter harga
-    const priceFilter: any = {};
-    if (minPrice) priceFilter.gte = Number(minPrice);
-    if (maxPrice) priceFilter.lte = Number(maxPrice);
+    const filters: any[] = [];
 
     // Build whereClause
-    const whereClause: any = {
-      AND: [
-        q ? {
-          OR: [
-            { name: { contains: q, mode: "insensitive" } },
-            { description: { contains: q, mode: "insensitive" } },
-          ],
-        } : {},
-        categoryId ? { categoryId } : {},
-        (minPrice || maxPrice) ? { price: priceFilter } : {},
-      ],
-    };
+    if (q) {
+      filters.push({
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+        ],
+      });
+    }
 
-    // Eksekusi kueri secara paralel
+    if (categoryId) {
+      filters.push({ categoryId });
+    }
+
+    if (minPrice || maxPrice) {
+      const priceFilter: any = {};
+      if (minPrice) priceFilter.gte = Number(minPrice);
+      if (maxPrice) priceFilter.lte = Number(maxPrice);
+      filters.push({ price: priceFilter });
+    }
+
+    const whereClause = filters.length > 0 ? { AND: filters } : {};
+
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where: whereClause,
